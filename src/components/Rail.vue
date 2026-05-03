@@ -17,7 +17,6 @@ type RailItem = {
   rating: number | string
 }
 
-// When set, both fields are required. Omitted when browse links are not used (e.g. compact related rail).
 export type RailBrowseMore = {
   categorySlug: string
   showBrowseMore: boolean
@@ -27,7 +26,7 @@ const props = withDefaults(
   defineProps<{
     title: string
     items: RailItem[]
-    // Caps tiles in the rail (default matches previous home behavior).
+    // Caps tiles in the rail
     maxItems?: number
     browseMore?: RailBrowseMore
   }>(),
@@ -59,7 +58,7 @@ const showBrowseMoreTile = computed(() => {
     class="group/rail relative"
     data-testid="shows-rail"
   >
-    <header class="xs:mb-4 mb-3 flex items-center gap-x-6 gap-y-2 sm:gap-x-8">
+    <header class="mb-4 flex items-center gap-x-6 gap-y-2 sm:gap-x-8">
       <h2 class="font-header text-foreground sm:text-header-sm text-lg leading-7 font-semibold">
         {{ title }}
       </h2>
@@ -82,7 +81,7 @@ const showBrowseMoreTile = computed(() => {
         v-for="show in visibleItems"
         :key="show.id"
         :to="{ name: 'show-details', params: { id: show.id } }"
-        class="w-poster-tile-sm sm:w-poster-tile-md md:w-poster-tile-lg xl:w-poster-tile-xl block shrink-0 snap-start rounded-2xl focus-visible:outline-none"
+        class="rail-tile-link"
       >
         <Tile
           :image-url="show.image?.medium || show.image?.original || fallbackImageUrl"
@@ -96,12 +95,9 @@ const showBrowseMoreTile = computed(() => {
         v-if="showBrowseMoreTile"
         :to="{ name: 'browse', params: { category: browseMore!.categorySlug } }"
         :aria-label="t('common.components.rail.seeMoreTileAriaLabel')"
-        class="w-poster-tile-sm sm:w-poster-tile-md md:w-poster-tile-lg xl:w-poster-tile-xl block shrink-0 snap-start rounded-2xl focus-visible:outline-none"
+        class="rail-tile-link"
       >
-        <article
-          class="group border-border bg-surface h-poster-tile-sm sm:h-poster-tile-md md:h-poster-tile-lg xl:h-poster-tile-xl max-w-poster-tile-sm sm:max-w-poster-tile-md md:max-w-poster-tile-lg xl:max-w-poster-tile-xl relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl border px-3 py-4 text-center shadow-xl"
-          data-testid="see-more-tile"
-        >
+        <div class="rail-see-more-tile" data-testid="see-more-tile">
           <span
             class="font-header text-foreground sm:text-header-sm text-sm leading-6 font-semibold whitespace-nowrap"
           >
@@ -111,8 +107,21 @@ const showBrowseMoreTile = computed(() => {
             aria-hidden="true"
             class="text-muted h-6 w-6 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
           />
-        </article>
+        </div>
       </RouterLink>
     </HorizontalSlider>
   </section>
 </template>
+
+<style scoped>
+@reference '../style.css';
+@config '../../tailwind.config.ts';
+
+.rail-tile-link {
+  @apply w-poster-tile-sm sm:w-poster-tile-md md:w-poster-tile-lg xl:w-poster-tile-xl block shrink-0 snap-start rounded-2xl focus-visible:outline-none;
+}
+
+.rail-see-more-tile {
+  @apply group border-border bg-surface h-poster-tile-sm sm:h-poster-tile-md md:h-poster-tile-lg xl:h-poster-tile-xl max-w-poster-tile-sm sm:max-w-poster-tile-md md:max-w-poster-tile-lg xl:max-w-poster-tile-xl relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl border px-3 py-4 text-center shadow-xl;
+}
+</style>

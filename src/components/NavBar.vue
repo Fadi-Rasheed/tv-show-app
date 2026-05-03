@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Search } from 'lucide-vue-next'
 import BackButton from '@/components/BackButton.vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 type NavElement = {
@@ -14,10 +14,9 @@ defineProps<{
   elements: NavElement[]
 }>()
 
-const route = useRoute()
 const router = useRouter()
-
-const showBackButton = computed(() => route.path !== '/')
+const route = useRoute()
+const isHomePage = computed(() => route.name === 'home')
 
 function goBack() {
   router.go(-1)
@@ -27,11 +26,11 @@ function goBack() {
 <template>
   <header class="border-border/75 bg-background/75 sticky top-0 z-40 border-b backdrop-blur">
     <nav
-      class="relative flex w-full items-center justify-center px-4 py-3 sm:px-6 lg:px-8"
+      class="relative flex w-full items-center justify-center p-4 sm:px-8"
       aria-label="Primary navigation"
     >
       <div class="absolute top-1/2 left-4 flex -translate-y-1/2 items-center sm:left-6 lg:left-8">
-        <BackButton :visible="showBackButton" @click="goBack" />
+        <BackButton v-if="!isHomePage" @click="goBack" />
       </div>
       <ul class="my-0 flex list-none items-center gap-8 p-0 sm:gap-10" role="list">
         <li v-for="element in elements" :key="element.to">

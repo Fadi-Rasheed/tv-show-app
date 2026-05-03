@@ -26,7 +26,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
-  select: [value: string]
 }>()
 
 const { t } = useI18n()
@@ -40,7 +39,6 @@ const translatedOptions = computed(() =>
 
 const handleSelect = (value: string) => {
   emit('update:modelValue', value)
-  emit('select', value)
   props.onSelect?.(value)
 }
 </script>
@@ -53,7 +51,6 @@ const handleSelect = (value: string) => {
     :model-value="modelValue"
     :options="translatedOptions"
     :placeholder="t(labelKey)"
-    @select="handleSelect"
-    @update:model-value="emit('update:modelValue', $event)"
+    @update:model-value="handleSelect"
   />
 </template>

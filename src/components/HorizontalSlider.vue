@@ -62,11 +62,11 @@ onUnmounted(() => {
     >
       <button
         :aria-label="props.leftArrowAriaLabel"
-        class="bg-surface/85 text-foreground ring-ring pointer-events-auto ml-1 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-md transition group-focus-within/slider:opacity-100 group-hover/slider:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 lg:flex"
+        class="slider-arrow-button slider-arrow-button--left"
         type="button"
         @click="scrollByAmount('left')"
       >
-        <ChevronLeft aria-hidden="true" class="h-5 w-5" />
+        <ChevronLeft aria-hidden="true" class="slider-arrow-chevron" />
       </button>
     </div>
 
@@ -76,11 +76,11 @@ onUnmounted(() => {
     >
       <button
         :aria-label="props.rightArrowAriaLabel"
-        class="bg-surface/85 text-foreground ring-ring pointer-events-auto mr-1 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-md transition group-focus-within/slider:opacity-100 group-hover/slider:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 lg:flex"
+        class="slider-arrow-button slider-arrow-button--right"
         type="button"
         @click="scrollByAmount('right')"
       >
-        <ChevronRight aria-hidden="true" class="h-5 w-5" />
+        <ChevronRight aria-hidden="true" class="slider-arrow-chevron" />
       </button>
     </div>
 
@@ -95,6 +95,26 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+@reference '../style.css';
+@config '../../tailwind.config.ts';
+
+.slider-arrow-button {
+  @apply bg-surface/85 text-foreground ring-ring pointer-events-auto hidden h-16 w-16 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-md transition lg:flex;
+  @apply group-focus-within/slider:opacity-100 group-hover/slider:opacity-100 focus-visible:opacity-100 focus-visible:ring-2;
+}
+
+.slider-arrow-button--left {
+  @apply ml-1;
+}
+
+.slider-arrow-button--right {
+  @apply mr-1;
+}
+
+.slider-arrow-chevron {
+  @apply h-8 w-8;
+}
+
 .slider-track {
   scrollbar-width: none;
 }

@@ -28,7 +28,7 @@ const { t } = useI18n()
       aria-hidden="true"
     />
     <div
-      class="absolute inset-y-0 right-0 hidden w-1/2 bg-[linear-gradient(to_right,rgba(10,6,24,0)_0%,rgba(10,6,24,0.35)_15%,rgba(10,6,24,0.78)_30%,rgba(10,6,24,1)_50%)] lg:block xl:w-[40%]"
+      class="absolute inset-y-0 right-0 hidden w-1/2 bg-[linear-gradient(to_right,rgba(10,6,24,0)_0%,rgba(10,6,24,0.35)_15%,rgba(10,6,24,0.78)_30%,rgba(10,6,24,1)_50%)] lg:block xl:w-[40%] 2xl:w-[60%]"
       aria-hidden="true"
     />
     <div

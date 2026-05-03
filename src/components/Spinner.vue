@@ -14,21 +14,14 @@ const props = withDefaults(
 
 const { t } = useI18n()
 
-const sizeClass = computed(() => {
-  switch (props.size) {
-    case 'sm':
-      return 'size-4'
-    case 'md':
-      return 'size-8'
-    case 'lg':
-      return 'size-12'
-    case 'xl':
-      return 'size-16'
-    case 'md':
-    default:
-      return 'size-8'
-  }
-})
+const sizeClassMap: Record<NonNullable<typeof props.size>, string> = {
+  sm: 'size-4',
+  md: 'size-8',
+  lg: 'size-12',
+  xl: 'size-16',
+}
+
+const sizeClass = computed(() => sizeClassMap[props.size] ?? sizeClassMap.md)
 </script>
 
 <template>
