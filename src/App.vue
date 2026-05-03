@@ -9,7 +9,11 @@ const { t } = useI18n()
 
 const navElements = computed(() => [
   { label: t('common.navigation.home'), to: '/' },
-  { label: t('common.navigation.search'), to: '/search' },
+  {
+    label: t('common.navigation.search'),
+    to: '/search',
+    icon: 'search' as const,
+  },
 ])
 </script>
 

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import BackButton from '@/components/BackButton.vue'
 import PersonCredit from '@/components/PersonCredit.vue'
 import Rail from '@/components/Rail.vue'
 import Rating from '@/components/Rating.vue'
@@ -23,7 +22,6 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const router = useRouter()
 
 const showId = computed(() => {
   const n = Number.parseInt(props.id, 10)
@@ -99,13 +97,9 @@ const tabs = computed(() => [
 
 <template>
   <main
-    class="bg-background text-foreground xs:px-5 min-h-screen px-4 py-5 sm:px-6 sm:py-8 lg:px-8"
+    class="bg-background text-foreground xs:px-5 min-h-screen px-4 pb-5 sm:px-6 sm:pb-8 lg:px-8"
     data-testid="show-details-page"
   >
-    <div class="mb-5 flex items-center sm:mb-6">
-      <BackButton @click="router.back()" />
-    </div>
-
     <section
       v-if="invalidRouteId"
       class="bg-surface border-border rounded-xl border px-4 py-5"
@@ -137,20 +131,24 @@ const tabs = computed(() => [
     </section>
 
     <template v-else-if="showQuery.data.value">
-      <header
-        class="relative -mx-4 mb-6 min-h-[220px] overflow-hidden sm:-mx-5 sm:min-h-[280px] lg:-mx-8"
-      >
+      <header class="bg-background relative -mx-4 mb-6 overflow-hidden sm:-mx-5 lg:-mx-8">
         <img
           :alt="showQuery.data.value.name"
-          class="h-full w-full object-cover object-center sm:max-h-[min(50vh,420px)]"
+          class="absolute inset-0 h-full min-h-[420px] w-full object-cover object-center sm:max-h-[768px] sm:min-h-[480px] lg:w-[90%] xl:w-[80%] 2xl:w-[70%]"
           :src="heroImage"
           loading="eager"
         />
         <div
-          class="from-background via-background/85 absolute inset-0 bg-linear-to-t to-transparent"
+          class="from-background via-background/85 absolute inset-0 h-full min-h-[420px] bg-linear-to-t to-transparent sm:min-h-[480px]"
           aria-hidden="true"
         />
-        <div class="absolute inset-x-0 bottom-0 px-4 pt-16 pb-6 sm:px-6 lg:px-8">
+        <div
+          class="absolute inset-y-0 right-0 hidden w-1/2 bg-[linear-gradient(to_right,rgba(10,6,24,0)_0%,rgba(10,6,24,0.35)_15%,rgba(10,6,24,0.78)_30%,rgba(10,6,24,1)_50%)] lg:block xl:w-[40%]"
+          aria-hidden="true"
+        />
+        <div
+          class="relative z-10 px-4 pt-[220px] pb-6 sm:px-6 sm:pt-[280px] sm:pb-8 lg:px-8 lg:pt-[220px]"
+        >
           <h1
             class="font-header text-foreground sm:text-header-lg mb-3 text-2xl leading-tight font-bold tracking-tight"
             data-testid="show-details-title"
@@ -207,7 +205,7 @@ const tabs = computed(() => [
         </div>
       </header>
 
-      <div class="max-w-5xl space-y-6">
+      <div class="space-y-6">
         <UnderlineTabs
           v-model="activeTab"
           :tabs="tabs"
@@ -283,27 +281,18 @@ const tabs = computed(() => [
               {{ t('common.pages.showDetails.details.sectionTitle') }}
             </h2>
 
-            <dl class="space-y-6">
-              <div v-if="castMembers.length">
-                <dt class="text-foreground sm:text-body-md mb-2 text-sm font-semibold">
-                  {{ t('common.pages.showDetails.details.cast') }}
-                </dt>
-                <dd class="flex flex-wrap gap-3">
-                  <PersonCredit v-for="p in castMembers" :key="p.id" :person="p" />
-                </dd>
-              </div>
-              <p v-else class="text-muted text-sm">
-                {{ t('common.pages.showDetails.details.emptyCast') }}
-              </p>
-            </dl>
+            <div v-if="castMembers.length" class="space-y-6">
+              <dd class="xs:flex-row xs:flex-wrap flex flex-col gap-3">
+                <PersonCredit v-for="p in castMembers" :key="p.id" :person="p" />
+              </dd>
+            </div>
+            <p v-else class="text-muted text-sm">
+              {{ t('common.pages.showDetails.details.emptyCast') }}
+            </p>
           </div>
         </section>
 
-        <ShowEpisodesPanel
-          v-if="activeTab === 'episodes'"
-          :key="showId"
-          :show-id="showId"
-        />
+        <ShowEpisodesPanel v-if="activeTab === 'episodes'" :key="showId" :show-id="showId" />
       </div>
     </template>
   </main>

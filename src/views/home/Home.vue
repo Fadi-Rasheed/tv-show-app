@@ -10,10 +10,13 @@ const genreRailsQuery = useShowsByGenreQuery()
 
 <template>
   <main
-    class="min-h-screen bg-background px-4 py-5 text-foreground xs:px-5 sm:px-6 sm:py-8 lg:px-8"
+    class="bg-background text-foreground xs:px-5 min-h-screen px-4 py-5 sm:px-6 sm:py-8 lg:px-8"
     data-testid="home-page"
   >
-    <h1 class="mb-5 font-header text-2xl leading-8 sm:mb-6 sm:text-header-md" data-testid="home-title">
+    <h1
+      class="font-header sm:text-header-md mb-6 text-2xl leading-8 font-semibold sm:mb-8"
+      data-testid="home-title"
+    >
       {{ t('common.pages.home.title') }}
     </h1>
 
@@ -33,16 +36,16 @@ const genreRailsQuery = useShowsByGenreQuery()
       role="alert"
     >
       <p class="font-medium">{{ t('common.pages.home.states.errorTitle') }}</p>
-      <p class="text-muted mt-2 text-sm sm:text-body-md">
+      <p class="text-muted sm:text-body-md mt-2 text-sm">
         {{ t('common.pages.home.states.errorDescription') }}
       </p>
     </section>
 
     <section v-else-if="!genreRailsQuery.data.value?.length" data-testid="home-empty">
-      <p class="text-muted text-sm sm:text-body-md">{{ t('common.pages.home.states.empty') }}</p>
+      <p class="text-muted sm:text-body-md text-sm">{{ t('common.pages.home.states.empty') }}</p>
     </section>
 
-    <section v-else class="space-y-6 sm:space-y-8" data-testid="home-rails">
+    <section v-else class="space-y-6 sm:space-y-12" data-testid="home-rails">
       <Rail
         v-for="rail in genreRailsQuery.data.value"
         :key="rail.genre"

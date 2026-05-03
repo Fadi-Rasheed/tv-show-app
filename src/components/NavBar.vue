@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Search } from 'lucide-vue-next'
 import BackButton from '@/components/BackButton.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 type NavElement = {
   label: string
   to: string
+  icon?: 'search'
 }
 
 defineProps<{
@@ -23,20 +25,27 @@ function goBack() {
 </script>
 
 <template>
-  <header class="border-border/80 bg-background/95 sticky top-0 z-40 border-b backdrop-blur">
+  <header class="border-border/75 bg-background/75 sticky top-0 z-40 border-b backdrop-blur">
     <nav
-      class="xs:px-5 mx-auto flex w-full max-w-6xl items-center px-4 py-3 sm:px-6 lg:px-8"
+      class="relative flex w-full items-center justify-center px-4 py-3 sm:px-6 lg:px-8"
       aria-label="Primary navigation"
     >
-      <BackButton :visible="showBackButton" @click="goBack" />
-      <ul class="m-0 list-none flex items-center gap-2 p-0" role="list">
+      <div class="absolute top-1/2 left-4 flex -translate-y-1/2 items-center sm:left-6 lg:left-8">
+        <BackButton :visible="showBackButton" @click="goBack" />
+      </div>
+      <ul class="my-0 flex list-none items-center gap-8 p-0 sm:gap-10" role="list">
         <li v-for="element in elements" :key="element.to">
           <RouterLink
             :to="element.to"
-            class="text-muted hover:text-foreground focus-visible:ring-brand/70 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-            active-class="bg-brand/20 text-brand-strong"
-            exact-active-class="bg-brand/20 text-brand-strong"
+            class="text-muted hover:bg-muted/50 hover:text-foreground focus-visible:ring-brand/70 text-md inline-flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            active-class="bg-brand/15 text-brand-strong ring-brand/30 shadow-sm ring-1"
+            exact-active-class="bg-brand/15 text-brand-strong ring-brand/30 shadow-sm ring-1"
           >
+            <Search
+              v-if="element.icon === 'search'"
+              class="h-4 w-4 shrink-0 text-current opacity-90"
+              aria-hidden="true"
+            />
             {{ element.label }}
           </RouterLink>
         </li>

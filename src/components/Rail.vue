@@ -40,9 +40,15 @@ const { t } = useI18n()
 const fallbackImageUrl = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png'
 
 const visibleItems = computed(() => props.items.slice(0, props.maxItems))
-const canLinkBrowse = computed(() => {
+
+const showBrowseMoreHeaderLink = computed(() => {
   const { categorySlug, showBrowseMore } = props.browseMore ?? {}
-  return showBrowseMore && categorySlug && props.items.length > props.maxItems
+  return Boolean(showBrowseMore && categorySlug)
+})
+
+const showBrowseMoreTile = computed(() => {
+  const { categorySlug, showBrowseMore } = props.browseMore ?? {}
+  return Boolean(showBrowseMore && categorySlug && props.items.length > props.maxItems)
 })
 </script>
 
@@ -52,13 +58,13 @@ const canLinkBrowse = computed(() => {
     class="group/rail relative"
     data-testid="shows-rail"
   >
-    <header class="xs:mb-4 xs:items-center xs:gap-4 mb-3 flex items-start justify-between gap-3">
-      <h2 class="font-header text-foreground sm:text-header-sm text-lg leading-7">
+    <header class="xs:mb-4 mb-3 flex items-center gap-x-6 gap-y-2 sm:gap-x-8">
+      <h2 class="font-header text-foreground sm:text-header-sm text-lg leading-7 font-semibold">
         {{ title }}
       </h2>
 
       <RouterLink
-        v-if="canLinkBrowse"
+        v-if="showBrowseMoreHeaderLink"
         :to="{ name: 'browse', params: { category: browseMore!.categorySlug } }"
         class="text-muted hover:text-foreground focus-visible:ring-ring xs:text-sm inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition focus-visible:ring-2 focus-visible:outline-none"
       >
@@ -75,7 +81,7 @@ const canLinkBrowse = computed(() => {
         v-for="show in visibleItems"
         :key="show.id"
         :to="{ name: 'show-details', params: { id: show.id } }"
-        class="w-poster-tile-sm sm:w-poster-tile-md md:w-poster-tile-lg block shrink-0 snap-start rounded-2xl focus-visible:outline-none"
+        class="w-poster-tile-sm sm:w-poster-tile-md md:w-poster-tile-lg xl:w-poster-tile-xl block shrink-0 snap-start rounded-2xl focus-visible:outline-none"
       >
         <Tile
           :image-url="show.image?.medium || show.image?.original || fallbackImageUrl"
@@ -85,17 +91,25 @@ const canLinkBrowse = computed(() => {
       </RouterLink>
 
       <RouterLink
-        v-if="canLinkBrowse"
+        v-if="showBrowseMoreTile"
         :to="{ name: 'browse', params: { category: browseMore!.categorySlug } }"
         :aria-label="t('common.components.rail.seeMoreTileAriaLabel')"
-        class="bg-surface text-foreground h-poster-tile-sm w-poster-tile-sm sm:h-poster-tile-md sm:w-poster-tile-md md:h-poster-tile-lg md:w-poster-tile-lg flex shrink-0 snap-start items-center justify-center rounded-2xl border"
+        class="w-poster-tile-sm sm:w-poster-tile-md md:w-poster-tile-lg xl:w-poster-tile-xl block shrink-0 snap-start rounded-2xl focus-visible:outline-none"
       >
-        <span
-          class="xs:text-sm inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase"
+        <article
+          class="group border-border bg-surface h-poster-tile-sm sm:h-poster-tile-md md:h-poster-tile-lg xl:h-poster-tile-xl max-w-poster-tile-sm sm:max-w-poster-tile-md md:max-w-poster-tile-lg xl:max-w-poster-tile-xl relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl border px-3 py-4 text-center shadow-xl"
+          data-testid="see-more-tile"
         >
-          <span>{{ t('common.actions.seeMore') }}</span>
-          <ChevronRight aria-hidden="true" class="h-4 w-4" />
-        </span>
+          <span
+            class="font-header text-foreground sm:text-header-sm text-sm leading-6 font-semibold whitespace-nowrap"
+          >
+            {{ t('common.actions.seeMore') }}
+          </span>
+          <ChevronRight
+            aria-hidden="true"
+            class="text-muted h-6 w-6 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+          />
+        </article>
       </RouterLink>
     </HorizontalSlider>
   </section>

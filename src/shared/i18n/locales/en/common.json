@@ -18,6 +18,9 @@
     "spinner": {
       "loading": "Loading"
     },
+    "button": {
+      "loadMore": "Load more"
+    },
     "rail": {
       "showsAriaLabel": "{title} shows",
       "scrollLeftAriaLabel": "Scroll left",
@@ -58,7 +61,7 @@
       "tileAriaLabel": "{title}, {rating}",
       "searchInput": {
         "label": "Search",
-        "placeholder": "Search by title, character, or genre",
+        "placeholder": "Search by show title",
         "ariaLabel": "Search TV shows by name"
       },
       "states": {
@@ -93,7 +96,7 @@
       "tabsAria": "Show sections",
       "tabs": {
         "related": "Related",
-        "details": "Details",
+        "details": "More Details",
         "episodes": "Episodes"
       },
       "related": {
@@ -102,10 +105,7 @@
         "empty": "No related shows found for this genre."
       },
       "details": {
-        "sectionTitle": "Creators and cast",
-        "directors": "Directors",
-        "cast": "Cast",
-        "emptyDirectors": "No director information available.",
+        "sectionTitle": "Cast",
         "emptyCast": "No cast information available."
       },
       "episodes": {

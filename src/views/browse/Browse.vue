@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useInfiniteQuery, type DefaultError, type InfiniteData } from '@tanstack/vue-query'
+import Button from '@/components/Button.vue'
 import Spinner from '@/components/Spinner.vue'
 import Tile from '@/components/Tile.vue'
 import { useI18n } from 'vue-i18n'
@@ -144,6 +145,13 @@ watch(
   { flush: 'post' }
 )
 
+const onLoadMore = () => {
+  if (browseQuery.isFetchingNextPage.value || !browseQuery.hasNextPage.value) {
+    return
+  }
+  void browseQuery.fetchNextPage()
+}
+
 onBeforeUnmount(() => {
   disconnectObserver()
 })
@@ -241,13 +249,16 @@ onBeforeUnmount(() => {
           />
 
           <div
-            v-if="browseQuery.isFetchingNextPage.value && filteredItems.length > 0"
-            class="flex flex-col items-center justify-center gap-2 py-8"
-            role="status"
-            aria-live="polite"
+            v-if="browseQuery.hasNextPage.value"
+            class="flex w-full justify-center px-2 pt-8 pb-2"
           >
-            <Spinner size="lg" />
-            <span class="sr-only">{{ t('common.pages.browse.states.loadingMore') }}</span>
+            <Button
+              variant="primary"
+              :loading="browseQuery.isFetchingNextPage.value"
+              @click="onLoadMore"
+            >
+              {{ t('common.components.button.loadMore') }}
+            </Button>
           </div>
         </template>
       </template>

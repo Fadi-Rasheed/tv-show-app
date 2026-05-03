@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, onUpdated, ref } from 'vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { observeElementResize } from '@/shared/utils/resize-observer'
 
 const props = defineProps<{
   leftArrowAriaLabel: string
@@ -8,23 +9,57 @@ const props = defineProps<{
 }>()
 
 const trackRef = ref<HTMLElement | null>(null)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+let stopResizeObservation: (() => void) | null = null
+
+const updateScrollState = () => {
+  const el = trackRef.value
+  if (!el) return
+  canScrollLeft.value = el.scrollLeft > 1
+  canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+}
 
 const scrollByAmount = (direction: 'left' | 'right') => {
-  if (!trackRef.value) {
-    return
-  }
-
+  if (!trackRef.value) return
   const amount = Math.round(trackRef.value.clientWidth * 0.8)
   trackRef.value.scrollBy({
     left: direction === 'right' ? amount : -amount,
     behavior: 'smooth',
   })
 }
+
+onMounted(() => {
+  const el = trackRef.value
+  if (!el) return
+
+  updateScrollState()
+  el.addEventListener('scroll', updateScrollState, { passive: true })
+  stopResizeObservation = observeElementResize(el, updateScrollState)
+})
+
+onUpdated(async () => {
+  await nextTick()
+  updateScrollState()
+})
+
+onUnmounted(() => {
+  const el = trackRef.value
+  if (el) {
+    el.removeEventListener('scroll', updateScrollState)
+  }
+
+  stopResizeObservation?.()
+  stopResizeObservation = null
+})
 </script>
 
 <template>
   <div class="group/slider relative">
-    <div class="pointer-events-none absolute inset-y-0 left-0 z-20 flex items-center">
+    <div
+      v-show="canScrollLeft"
+      class="pointer-events-none absolute inset-y-0 left-0 z-20 flex items-center"
+    >
       <button
         :aria-label="props.leftArrowAriaLabel"
         class="bg-surface/85 text-foreground ring-ring pointer-events-auto ml-1 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-md transition group-focus-within/slider:opacity-100 group-hover/slider:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 lg:flex"
@@ -35,7 +70,10 @@ const scrollByAmount = (direction: 'left' | 'right') => {
       </button>
     </div>
 
-    <div class="pointer-events-none absolute inset-y-0 right-0 z-20 flex items-center">
+    <div
+      v-show="canScrollRight"
+      class="pointer-events-none absolute inset-y-0 right-0 z-20 flex items-center"
+    >
       <button
         :aria-label="props.rightArrowAriaLabel"
         class="bg-surface/85 text-foreground ring-ring pointer-events-auto mr-1 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-md transition group-focus-within/slider:opacity-100 group-hover/slider:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 lg:flex"
@@ -48,7 +86,7 @@ const scrollByAmount = (direction: 'left' | 'right') => {
 
     <div
       ref="trackRef"
-      class="slider-track flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 xs:gap-4"
+      class="slider-track xs:gap-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2"
       data-testid="horizontal-slider-track"
     >
       <slot />

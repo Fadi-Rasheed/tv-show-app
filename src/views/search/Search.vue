@@ -62,11 +62,7 @@ const formatRating = (average: number | null) => {
 </script>
 
 <template>
-  <main
-    class="bg-background text-foreground xs:px-5 min-h-screen px-4 py-8 sm:px-6 sm:pt-14 sm:pb-10 lg:px-8 lg:pt-16"
-  >
-    <h1 class="sr-only">{{ t('common.pages.search.title') }}</h1>
-
+  <main class="bg-background text-foreground xs:px-5 px-4 pt-8 sm:px-6 sm:pt-10">
     <section class="mb-6 sm:mb-12" :aria-label="t('common.pages.search.searchSectionAria')">
       <label class="sr-only" :for="searchInputId">
         {{ t('common.pages.search.searchInput.label') }}
@@ -134,7 +130,7 @@ const formatRating = (average: number | null) => {
 
       <ul
         v-else
-        class="m-0 list-none flex min-w-0 flex-wrap items-start justify-center gap-x-3 gap-y-6 p-0 sm:gap-x-4 sm:gap-y-8"
+        class="m-0 flex min-w-0 list-none flex-wrap items-start justify-center gap-x-3 gap-y-6 p-0 sm:gap-x-4 sm:gap-y-8"
         :aria-setsize="results.length"
       >
         <li
