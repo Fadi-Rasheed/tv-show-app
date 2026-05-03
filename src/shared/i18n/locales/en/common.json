@@ -1,0 +1,124 @@
+{
+  "navigation": {
+    "home": "Home",
+    "search": "Search"
+  },
+  "actions": {
+    "seeMore": "See more"
+  },
+  "categories": {
+    "actionAndAdventure": "Action and Adventure"
+  },
+  "components": {
+    "filterDropdown": {
+      "label": "Filter by genre",
+      "openAriaLabel": "Open filter options",
+      "listAriaLabel": "Filter options"
+    },
+    "spinner": {
+      "loading": "Loading"
+    },
+    "rail": {
+      "showsAriaLabel": "{title} shows",
+      "scrollLeftAriaLabel": "Scroll left",
+      "scrollRightAriaLabel": "Scroll right",
+      "seeMoreTileAriaLabel": "See more shows"
+    }
+  },
+  "pages": {
+    "browse": {
+      "title": "Browse: {category}",
+      "description": "Discover more shows tagged with this genre. Results load as you scroll.",
+      "resultsRegionAria": "Genre browse results",
+      "tileAriaLabel": "{title}, {rating}",
+      "states": {
+        "loading": "Loading shows",
+        "loadingMore": "Loading more shows",
+        "findingShows": "Searching catalog for matching shows…",
+        "noResults": "No {category} shows were found in the catalog.",
+        "errorTitle": "We couldn't load shows right now.",
+        "errorDescription": "Please try again in a moment."
+      }
+    },
+    "home": {
+      "title": "Home",
+      "states": {
+        "loading": "Loading shows",
+        "errorTitle": "We couldn't load shows right now.",
+        "errorDescription": "Please try again in a moment.",
+        "empty": "No shows are available right now."
+      }
+    },
+    "search": {
+      "title": "Search",
+      "searchSectionAria": "Search shows",
+      "resultsRegionAria": "Search results",
+      "clearAria": "Clear search",
+      "ratingValue": "{rating}",
+      "tileAriaLabel": "{title}, {rating}",
+      "searchInput": {
+        "label": "Search",
+        "placeholder": "Search by title, character, or genre",
+        "ariaLabel": "Search TV shows by name"
+      },
+      "states": {
+        "loading": "Searching shows",
+        "emptyHint": "Enter a show name to see matching results.",
+        "noResults": "No shows match your search.",
+        "errorTitle": "We couldn't search right now.",
+        "errorDescription": "Please try again in a moment."
+      },
+      "filters": {
+        "genreAll": "All genres",
+        "genreCrime": "Crime",
+        "genreHistorical": "Historical",
+        "genreSciFi": "Sci-Fi",
+        "genreSpy": "Spy",
+        "genreSuperhero": "Superhero",
+        "genreThriller": "Thriller",
+        "genreWar": "War"
+      }
+    },
+    "showDetails": {
+      "title": "Show details",
+      "backAria": "Go back",
+      "loading": "Loading show",
+      "errorTitle": "We couldn't load this show.",
+      "errorDescription": "Please try again in a moment.",
+      "invalidId": "This show link is not valid.",
+      "noSummary": "No description available.",
+      "noRating": "No rating",
+      "genresAria": "Genres",
+      "ratingAria": "Average rating",
+      "tabsAria": "Show sections",
+      "tabs": {
+        "related": "Related",
+        "details": "Details",
+        "episodes": "Episodes"
+      },
+      "related": {
+        "relatedShows": "Related Shows",
+        "loading": "Loading related shows",
+        "empty": "No related shows found for this genre."
+      },
+      "details": {
+        "sectionTitle": "Creators and cast",
+        "directors": "Directors",
+        "cast": "Cast",
+        "emptyDirectors": "No director information available.",
+        "emptyCast": "No cast information available."
+      },
+      "episodes": {
+        "count": "{count} episodes",
+        "seasonLabel": "Season {n}",
+        "seasonSelectAria": "Select season",
+        "seasonListAria": "Seasons",
+        "loading": "Loading episodes",
+        "emptyAll": "No episodes are listed for this show.",
+        "emptySeason": "No episodes in this season.",
+        "runtimeMinutes": "{count} min",
+        "episodeCardAriaLabel": "Episode: {title}"
+      }
+    }
+  }
+}
