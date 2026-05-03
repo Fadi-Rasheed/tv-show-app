@@ -9,6 +9,7 @@ import Tile from '@/components/Tile.vue'
 type RailItem = {
   id: number | string
   title: string
+  genres: string[]
   image?: {
     medium?: string | null
     original?: string | null
@@ -16,7 +17,7 @@ type RailItem = {
   rating: number | string
 }
 
-/** When set, both fields are required. Omitted when browse links are not used (e.g. compact related rail). */
+// When set, both fields are required. Omitted when browse links are not used (e.g. compact related rail).
 export type RailBrowseMore = {
   categorySlug: string
   showBrowseMore: boolean
@@ -26,12 +27,12 @@ const props = withDefaults(
   defineProps<{
     title: string
     items: RailItem[]
-    /** Caps tiles in the rail (default matches previous home behavior). */
+    // Caps tiles in the rail (default matches previous home behavior).
     maxItems?: number
     browseMore?: RailBrowseMore
   }>(),
   {
-    maxItems: 30,
+    maxItems: 20,
     browseMore: undefined,
   }
 )
@@ -85,6 +86,7 @@ const showBrowseMoreTile = computed(() => {
       >
         <Tile
           :image-url="show.image?.medium || show.image?.original || fallbackImageUrl"
+          :genres="show.genres"
           :rating="show.rating"
           :title="show.title"
         />

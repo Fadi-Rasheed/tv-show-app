@@ -12,6 +12,7 @@ type RailShowItem = {
   title: string
   image: ShowImage
   rating: number
+  genres: string[]
 }
 
 export type GenreRail = {
@@ -26,6 +27,7 @@ export type GenreBrowseShowItem = {
   title: string
   image: ShowImage
   ratingAverage: number | null
+  genres: string[]
 }
 
 const FALLBACK_SHOW_IMAGE_URL = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png'
@@ -66,6 +68,7 @@ const toRailItem = (show: Show): RailShowItem => ({
   title: show.name,
   image: show.image ?? FALLBACK_SHOW_IMAGE,
   rating: show.rating.average ?? 0,
+  genres: show.genres,
 })
 
 const sortByRatingDescending = (left: RailShowItem, right: RailShowItem) => {
@@ -127,6 +130,7 @@ export const collectGenreShowsFromPages = (
         title: show.name,
         image: show.image ?? FALLBACK_SHOW_IMAGE,
         ratingAverage: show.rating.average,
+        genres: show.genres,
       })
     }
   }

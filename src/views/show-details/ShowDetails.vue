@@ -2,12 +2,12 @@
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import PersonCredit from '@/components/PersonCredit.vue'
+import PersonCredit from '@/features/show-details/PersonCredit.vue'
 import Rail from '@/components/Rail.vue'
 import Rating from '@/components/Rating.vue'
 import Spinner from '@/components/Spinner.vue'
 import UnderlineTabs from '@/components/UnderlineTabs.vue'
-import ShowEpisodesPanel from '@/views/show-details/ShowEpisodesPanel.vue'
+import ShowEpisodesPanel from '@/features/show-details/ShowEpisodesPanel.vue'
 import {
   relatedItemsFromGenreRails,
   toCategorySlug,

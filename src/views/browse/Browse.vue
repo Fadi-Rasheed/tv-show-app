@@ -234,6 +234,7 @@ onBeforeUnmount(() => {
               >
                 <Tile
                   :image-url="item.image.medium ?? item.image.original"
+                  :genres="item.genres"
                   :rating="formatRating(item.ratingAverage)"
                   :title="item.title"
                 />

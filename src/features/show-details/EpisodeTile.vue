@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import EpisodeDetailPanel from '@/components/EpisodeDetailPanel.vue'
+import EpisodeDetailPanel from '@/features/show-details/EpisodeDetailPanel.vue'
 import MediaCard from '@/components/MediaCard.vue'
 import { useEpisodeTileLabels } from '@/composables/useEpisodeTileLabels'
 import type { Episode } from '@/shared/types/episode'

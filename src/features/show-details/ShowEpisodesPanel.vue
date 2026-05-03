@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DropdownSelect from '@/components/DropdownSelect.vue'
-import EpisodeTile from '@/components/EpisodeTile.vue'
+import EpisodeTile from '@/features/show-details/EpisodeTile.vue'
 import HorizontalSlider from '@/components/HorizontalSlider.vue'
 import Spinner from '@/components/Spinner.vue'
 import { useShowEpisodesQuery } from '@/shared/api/shows/queries'
@@ -23,7 +23,7 @@ watch(
   () => {
     episodesInitForShow.value = null
     selectedSeason.value = '1'
-  },
+  }
 )
 
 watch(
@@ -40,7 +40,7 @@ watch(
     episodesInitForShow.value = id
     const seasons = [...new Set(eps.map((e) => e.season))].sort((a, b) => a - b)
     selectedSeason.value = seasons.includes(1) ? '1' : String(seasons[0] ?? 1)
-  },
+  }
 )
 
 const filteredEpisodes = computed(() => {
@@ -73,7 +73,7 @@ const seasonOptions = computed(() => {
 })
 
 const episodeCountLabel = computed(() =>
-  t('common.pages.showDetails.episodes.count', { count: filteredEpisodes.value.length }),
+  t('common.pages.showDetails.episodes.count', { count: filteredEpisodes.value.length })
 )
 </script>
 

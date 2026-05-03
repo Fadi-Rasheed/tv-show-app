@@ -2,8 +2,8 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useQuery, type DefaultError } from '@tanstack/vue-query'
-import { Search, X } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
+import SearchInput from '@/features/search/SearchInput.vue'
 import Spinner from '@/components/Spinner.vue'
 import Tile from '@/components/Tile.vue'
 import type { ShowSearchResponse } from '@/shared/types/search'
@@ -64,35 +64,14 @@ const formatRating = (average: number | null) => {
 <template>
   <main class="bg-background text-foreground xs:px-5 px-4 pt-8 sm:px-6 sm:pt-10">
     <section class="mb-6 sm:mb-12" :aria-label="t('common.pages.search.searchSectionAria')">
-      <label class="sr-only" :for="searchInputId">
-        {{ t('common.pages.search.searchInput.label') }}
-      </label>
-      <div class="relative w-full max-w-none">
-        <Search
-          class="text-foreground pointer-events-none absolute top-1/2 left-0 h-6 w-6 -translate-y-1/2 sm:h-7 sm:w-7"
-          aria-hidden="true"
-        />
-        <input
-          :id="searchInputId"
-          v-model="searchQuery"
-          type="text"
-          inputmode="search"
-          enterkeyhint="search"
-          autocomplete="off"
-          :aria-label="t('common.pages.search.searchInput.ariaLabel')"
-          :placeholder="t('common.pages.search.searchInput.placeholder')"
-          class="placeholder:text-muted/90 text-foreground w-full appearance-none border-0 border-b border-white/25 bg-transparent py-3 pr-11 pl-10 text-xl leading-snug transition-colors outline-none focus-visible:border-white/70 sm:py-4 sm:pl-12 sm:text-2xl"
-        />
-        <button
-          v-if="searchQuery"
-          type="button"
-          class="text-muted hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-0 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded transition-colors focus-visible:ring-2 focus-visible:outline-none"
-          :aria-label="t('common.pages.search.clearAria')"
-          @click="searchQuery = ''"
-        >
-          <X class="h-6 w-6" aria-hidden="true" />
-        </button>
-      </div>
+      <SearchInput
+        :id="searchInputId"
+        v-model="searchQuery"
+        :label="t('common.pages.search.searchInput.label')"
+        :input-aria-label="t('common.pages.search.searchInput.ariaLabel')"
+        :placeholder="t('common.pages.search.searchInput.placeholder')"
+        :clear-input-aria-label="t('common.pages.search.clearAria')"
+      />
     </section>
 
     <section
@@ -153,6 +132,7 @@ const formatRating = (average: number | null) => {
               :image-url="
                 entry.show.image?.medium ?? entry.show.image?.original ?? FALLBACK_SHOW_POSTER_URL
               "
+              :genres="entry.show.genres"
               :rating="formatRating(entry.show.rating.average)"
               :title="entry.show.name"
             />

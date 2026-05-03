@@ -13,13 +13,6 @@ const genreRailsQuery = useShowsByGenreQuery()
     class="bg-background text-foreground xs:px-5 min-h-screen px-4 py-5 sm:px-6 sm:py-8 lg:px-8"
     data-testid="home-page"
   >
-    <h1
-      class="font-header sm:text-header-md mb-6 text-2xl leading-8 font-semibold sm:mb-8"
-      data-testid="home-title"
-    >
-      {{ t('common.pages.home.title') }}
-    </h1>
-
     <section
       v-if="genreRailsQuery.isLoading.value"
       class="flex min-h-40 items-center justify-center"
