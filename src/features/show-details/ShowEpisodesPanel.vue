@@ -5,7 +5,7 @@ import DropdownSelect from '@/components/DropdownSelect.vue'
 import EpisodeTile from '@/features/show-details/EpisodeTile.vue'
 import HorizontalSlider from '@/components/HorizontalSlider.vue'
 import Spinner from '@/components/Spinner.vue'
-import { useShowEpisodesQuery } from '@/shared/api/shows/queries'
+import { useShowEpisodesQuery } from '@/shared/api/queries'
 
 const props = defineProps<{
   showId: number

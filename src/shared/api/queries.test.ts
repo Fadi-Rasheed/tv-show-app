@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { SHOW_GENRE } from '@/shared/types/genre'
 import type { ShowsResponse } from '@/shared/types/show'
-import { buildGenreRails, relatedItemsFromGenreRails, showMatchesBrowseCategory } from './queries'
+import { buildGenreRails, relatedItemsFromGenreRails, showMatchesBrowseCategory } from './utils'
 
 const showsFixture: ShowsResponse = [
   {

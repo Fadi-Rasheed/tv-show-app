@@ -9,7 +9,7 @@ import commonEn from '@/shared/i18n/locales/en/common.json'
 
 const useShowsByGenreQueryMock = vi.fn()
 
-vi.mock('@/shared/api/shows/queries', () => ({
+vi.mock('@/shared/api/queries', () => ({
   useShowsByGenreQuery: () => useShowsByGenreQueryMock(),
 }))
 

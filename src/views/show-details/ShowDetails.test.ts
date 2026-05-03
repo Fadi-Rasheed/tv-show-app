@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/vue'
 import { createI18n } from 'vue-i18n'
 import { describe, expect, it, vi } from 'vitest'
 import ShowDetails from '@/views/show-details/ShowDetails.vue'
-import type { GenreRail } from '@/shared/api/shows/queries'
+import type { GenreRail } from '@/shared/api/utils'
 import commonEn from '@/shared/i18n/locales/en/common.json'
 
 vi.mock('vue-router', async (importOriginal) => {
@@ -22,8 +22,8 @@ const queryMocks = vi.hoisted(() => ({
   useShowEpisodesQuery: vi.fn(),
 }))
 
-vi.mock('@/shared/api/shows/queries', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/shared/api/shows/queries')>()
+vi.mock('@/shared/api/queries', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/shared/api/queries')>()
   return {
     ...actual,
     useShowDetailQuery: () => queryMocks.useShowDetailQuery(),
