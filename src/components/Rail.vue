@@ -97,7 +97,7 @@ const showBrowseMoreTile = computed(() => {
         :aria-label="t('common.components.rail.seeMoreTileAriaLabel')"
         class="rail-tile-link"
       >
-        <div class="rail-see-more-tile" data-testid="see-more-tile">
+        <div class="rail-see-more-tile group" data-testid="see-more-tile">
           <span
             class="font-header text-foreground sm:text-header-sm text-sm leading-6 font-semibold whitespace-nowrap"
           >
@@ -122,6 +122,6 @@ const showBrowseMoreTile = computed(() => {
 }
 
 .rail-see-more-tile {
-  @apply group border-border bg-surface h-poster-tile-sm sm:h-poster-tile-md md:h-poster-tile-lg xl:h-poster-tile-xl max-w-poster-tile-sm sm:max-w-poster-tile-md md:max-w-poster-tile-lg xl:max-w-poster-tile-xl relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl border px-3 py-4 text-center shadow-xl;
+  @apply border-border bg-surface h-poster-tile-sm sm:h-poster-tile-md md:h-poster-tile-lg xl:h-poster-tile-xl max-w-poster-tile-sm sm:max-w-poster-tile-md md:max-w-poster-tile-lg xl:max-w-poster-tile-xl relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl border px-3 py-4 text-center shadow-xl;
 }
 </style>
