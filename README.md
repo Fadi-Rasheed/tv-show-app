@@ -2,6 +2,10 @@
 
 Browse and search television series powered by the public [TVMaze API](https://www.tvmaze.com/api): a responsive dashboard with genre-based discovery, full show pages, and fast search.
 
+## Live Demo
+
+[ShowIndex on Vercel](https://show-index.vercel.app/)
+
 ## Features by page
 
 ### Home (`/`)
