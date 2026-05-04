@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { useQuery, type DefaultError } from '@tanstack/vue-query'
 import { useI18n } from 'vue-i18n'
 import SearchInput from '@/features/search/SearchInput.vue'
 import SearchResultsSection from '@/features/search/SearchResultsSection.vue'
-import type { ShowSearchResponse } from '@/shared/types/search'
-import { showSearchQueryOptions } from '@/shared/api/queries'
+import { useShowSearchQuery } from '@/shared/api/queries'
 import { createDebouncer } from '@/shared/utils/debounce'
 
 const SEARCH_DEBOUNCE_MS = 350
@@ -18,23 +16,21 @@ const debouncedQuery = ref('')
 
 const searchInputDebouncer = createDebouncer<string>({
   debounceDelayMs: SEARCH_DEBOUNCE_MS,
-  onDebouncedValue: (latestRawQuery) => {
-    debouncedQuery.value = latestRawQuery.trim()
+  onDebouncedValue: (latestQuery) => {
+    debouncedQuery.value = latestQuery.trim()
   },
-  shouldFlushImmediately: (candidateRawQuery) => candidateRawQuery.trim().length === 0,
+  shouldFlushImmediately: (query) => query.trim().length === 0,
 })
 
-watch(searchQuery, (nextRawQuery) => {
-  searchInputDebouncer.schedule(nextRawQuery)
+watch(searchQuery, (nextQuery) => {
+  searchInputDebouncer.schedule(nextQuery)
 })
 
 onBeforeUnmount(() => {
   searchInputDebouncer.cancelPending()
 })
 
-const showSearchQuery = useQuery<ShowSearchResponse, DefaultError>(() =>
-  showSearchQueryOptions(debouncedQuery.value)
-)
+const showSearchQuery = useShowSearchQuery(() => debouncedQuery.value)
 
 const results = computed(() => showSearchQuery.data.value ?? [])
 
@@ -43,17 +39,10 @@ const showEmptyHint = computed(() => !debouncedQuery.value && !searchQuery.value
 const showNoResults = computed(
   () =>
     debouncedQuery.value.length > 0 &&
-    !showSearchQuery.isPending.value &&
+    !showSearchQuery.isLoading.value &&
     !showSearchQuery.isError.value &&
     results.value.length === 0
 )
-
-const formatRating = (average: number | null) => {
-  if (average == null) {
-    return t('common.pages.showDetails.noRating')
-  }
-  return t('common.pages.search.ratingValue', { rating: average.toFixed(1) })
-}
 </script>
 
 <template>
@@ -70,12 +59,11 @@ const formatRating = (average: number | null) => {
     </section>
 
     <SearchResultsSection
-      :is-pending="showSearchQuery.isPending.value"
+      :is-pending="showSearchQuery.isLoading.value"
       :is-error="showSearchQuery.isError.value"
       :show-empty-hint="showEmptyHint"
       :show-no-results="showNoResults"
       :results="results"
-      :format-rating="formatRating"
     />
   </main>
 </template>

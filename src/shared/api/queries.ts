@@ -9,33 +9,43 @@ import { showQueryKeys } from './query-keys'
 import { buildGenreRails } from './utils'
 import type { GenreRail } from './utils'
 
-export const showsByGenreBrowseInfiniteQueryOptions = (categorySlug: string) => ({
-  queryKey: showQueryKeys.browseGenre(categorySlug),
+export const showsPagesInfiniteQueryOptions = (queryKeyPart: string) => ({
+  queryKey: showQueryKeys.browseGenre(queryKeyPart),
   queryFn: (context: QueryFunctionContext<readonly unknown[], number>) =>
     fetchShowsIndexPage(context.pageParam),
   initialPageParam: 0,
   getNextPageParam: (lastPage: ShowsResponse, _allPages: ShowsResponse[], lastPageParam: number) =>
     lastPage.length === 0 ? undefined : lastPageParam + 1,
-  enabled: categorySlug.length > 0,
+  enabled: queryKeyPart.length > 0,
 })
 
-export const useShowsByGenreQuery = (page?: number) =>
-  useQuery<ShowsResponse, DefaultError, GenreRail[]>({
-    queryKey: showQueryKeys.list(page),
-    queryFn: () => fetchApi<ShowsResponse>('/shows', page === undefined ? {} : { query: { page } }),
-    select: (shows) => buildGenreRails(shows),
-  })
+type ShowsQueryResult<TData> = ReturnType<typeof useQuery<ShowsResponse, DefaultError, TData>>
 
-/** @param showId - Numeric show id. Use `RouterView` `:key="route.path"` (or similar) so this updates when the route id changes. */
+export function useShowsQuery<TTransformed = ShowsResponse>(
+  page?: number,
+  transform?: (shows: ShowsResponse) => TTransformed
+): ShowsQueryResult<TTransformed> {
+  return useQuery<ShowsResponse, DefaultError, TTransformed>({
+    queryKey: showQueryKeys.list(page),
+    queryFn: () => fetchShowsIndexPage(page),
+    ...(transform ? { select: transform } : {}),
+  })
+}
+
+export const useShowsByGenreQuery = (
+  page?: number
+): ReturnType<typeof useQuery<ShowsResponse, DefaultError, GenreRail[]>> =>
+  useShowsQuery(page, buildGenreRails)
+
 export const useShowDetailQuery = (showId: number, embed?: string) =>
-  useQuery<ShowWithEmbedded, DefaultError, ShowWithEmbedded>({
+  useQuery<ShowWithEmbedded>({
     queryKey: showQueryKeys.detail(showId, embed),
     queryFn: () =>
       fetchApi<ShowWithEmbedded>(
         `/shows/${showId}`,
         embed === undefined || embed === '' ? {} : { query: { embed } }
       ),
-    enabled: Number.isFinite(showId) && showId > 0,
+    enabled: Boolean(showId),
   })
 
 export const useShowEpisodesQuery = (showId: number, enabled = true) =>
@@ -45,15 +55,19 @@ export const useShowEpisodesQuery = (showId: number, enabled = true) =>
     enabled: showId > 0 && enabled,
   })
 
-export const showSearchQueryOptions = (searchQuery: string) => {
-  const q = searchQuery.trim()
+export const useShowSearchQuery = (getSearchQuery: () => string) => {
+  const getTrimmedQuery = () => getSearchQuery().trim()
 
-  return {
-    queryKey: showQueryKeys.search(q),
-    queryFn: () =>
-      fetchApi<ShowSearchResponse>('/search/shows', {
-        query: { q },
-      }),
-    enabled: q.length > 0,
-  }
+  return useQuery<ShowSearchResponse, DefaultError>(() => {
+    const q = getTrimmedQuery()
+
+    return {
+      queryKey: showQueryKeys.search(q),
+      queryFn: () =>
+        fetchApi<ShowSearchResponse>('/search/shows', {
+          query: { q },
+        }),
+      enabled: q.length > 0,
+    }
+  })
 }

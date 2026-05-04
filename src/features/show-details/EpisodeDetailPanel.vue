@@ -9,9 +9,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="space-y-1.5 p-3">
+  <div class="space-y-2 p-3">
     <h3
-      class="font-header text-foreground line-clamp-2 min-h-[2.5rem] text-left text-sm leading-snug font-semibold"
+      class="font-header text-foreground line-clamp-2 min-h-[2rem] text-left text-sm leading-snug font-semibold"
       data-testid="episode-detail-title"
     >
       {{ titleLine }}
@@ -19,19 +19,18 @@ defineProps<{
 
     <p
       v-if="summaryPlain"
-      class="text-muted sm:text-body-sm line-clamp-2 min-h-[2.25rem] text-left text-xs leading-relaxed"
+      class="text-muted sm:text-body-sm line-clamp-2 min-h-[2rem] text-left text-xs leading-relaxed"
       data-testid="episode-detail-summary"
     >
       {{ summaryPlain }}
     </p>
-    <p v-else aria-hidden="true" class="min-h-[2.25rem]">&nbsp;</p>
+    <p v-else aria-hidden="true" class="min-h-[2rem]">&nbsp;</p>
 
     <div
       class="text-muted flex min-h-4 flex-wrap items-center gap-x-2 gap-y-1 text-xs"
       data-testid="episode-detail-meta"
     >
-      <span v-if="runtimeLabel">{{ runtimeLabel }}</span>
-      <span v-if="runtimeLabel && airdateLabel" aria-hidden="true">·</span>
+      <span v-if="runtimeLabel">{{ runtimeLabel }}.</span>
       <time v-if="airdateLabel" :datetime="airdateIso ?? undefined">{{ airdateLabel }}</time>
     </div>
   </div>

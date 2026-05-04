@@ -9,10 +9,16 @@ const FALLBACK_SHOW_POSTER_URL = 'https://static.tvmaze.com/images/no-img/no-img
 
 defineProps<{
   results: ShowSearchResultItem[]
-  formatRating: (average: number | null) => string
 }>()
 
 const { t } = useI18n()
+
+const formatRating = (average: number | null) => {
+  if (average == null) {
+    return t('common.pages.showDetails.noRating')
+  }
+  return t('common.pages.search.ratingValue', { rating: average.toFixed(1) })
+}
 </script>
 
 <template>
@@ -37,7 +43,9 @@ const { t } = useI18n()
         :aria-posinset="index + 1"
       >
         <Tile
-          :image-url="entry.show.image?.medium ?? entry.show.image?.original ?? FALLBACK_SHOW_POSTER_URL"
+          :image-url="
+            entry.show.image?.medium ?? entry.show.image?.original ?? FALLBACK_SHOW_POSTER_URL
+          "
           :genres="entry.show.genres"
           :rating="formatRating(entry.show.rating.average)"
           :title="entry.show.name"

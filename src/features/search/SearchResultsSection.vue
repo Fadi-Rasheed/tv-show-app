@@ -1,22 +1,37 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SearchEmptyHintState from '@/features/search/SearchEmptyHintState.vue'
-import SearchErrorState from '@/features/search/SearchErrorState.vue'
-import SearchLoadingState from '@/features/search/SearchLoadingState.vue'
-import SearchNoResultsState from '@/features/search/SearchNoResultsState.vue'
 import SearchResultsGrid from '@/features/search/SearchResultsGrid.vue'
+import SearchResultsState from '@/features/search/SearchResultsState.vue'
+import type { SearchResultsViewState } from '@/features/search/SearchResultsState.vue'
 import type { ShowSearchResultItem } from '@/shared/types/search'
 
-defineProps<{
+const props = defineProps<{
   isPending: boolean
   isError: boolean
   showEmptyHint: boolean
   showNoResults: boolean
   results: ShowSearchResultItem[]
-  formatRating: (average: number | null) => string
 }>()
 
 const { t } = useI18n()
+
+const activeState = computed<SearchResultsViewState | null>(() => {
+  if (props.showEmptyHint) {
+    return 'emptyHint'
+  }
+  if (props.isPending) {
+    return 'loading'
+  }
+  if (props.isError) {
+    return 'error'
+  }
+  if (props.showNoResults) {
+    return 'noResults'
+  }
+
+  return null
+})
 </script>
 
 <template>
@@ -26,10 +41,7 @@ const { t } = useI18n()
     class="min-h-48"
     role="region"
   >
-    <SearchEmptyHintState v-if="showEmptyHint" />
-    <SearchLoadingState v-else-if="isPending" />
-    <SearchErrorState v-else-if="isError" />
-    <SearchNoResultsState v-else-if="showNoResults" />
-    <SearchResultsGrid v-else :results="results" :format-rating="formatRating" />
+    <SearchResultsState v-if="activeState" :state="activeState" />
+    <SearchResultsGrid v-else :results="results" />
   </section>
 </template>

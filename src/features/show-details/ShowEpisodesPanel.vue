@@ -16,12 +16,21 @@ const { t } = useI18n()
 const episodesQuery = useShowEpisodesQuery(props.showId, true)
 
 const selectedSeason = ref('1')
-const episodesInitForShow = ref<number | null>(null)
+const initializedShowId = ref<number | null>(null)
+
+const availableSeasons = computed(() => {
+  const eps = episodesQuery.data.value
+  if (!eps?.length) {
+    return []
+  }
+
+  return [...new Set(eps.map((e) => e.season))].sort((a, b) => a - b)
+})
 
 watch(
   () => props.showId,
   () => {
-    episodesInitForShow.value = null
+    initializedShowId.value = null
     selectedSeason.value = '1'
   }
 )
@@ -33,13 +42,14 @@ watch(
       return
     }
 
-    if (episodesInitForShow.value === id) {
+    if (initializedShowId.value === id) {
       return
     }
 
-    episodesInitForShow.value = id
-    const seasons = [...new Set(eps.map((e) => e.season))].sort((a, b) => a - b)
-    selectedSeason.value = seasons.includes(1) ? '1' : String(seasons[0] ?? 1)
+    initializedShowId.value = id
+    selectedSeason.value = availableSeasons.value.includes(1)
+      ? '1'
+      : `${availableSeasons.value[0] ?? 1}`
   }
 )
 
@@ -49,24 +59,22 @@ const filteredEpisodes = computed(() => {
     return []
   }
 
-  const s = Number.parseInt(selectedSeason.value, 10)
+  const seasonNumber = Number.parseInt(selectedSeason.value, 10)
   return eps
-    .filter((e) => e.season === s)
+    .filter((e) => e.season === seasonNumber)
     .sort((a, b) => {
-      const an = a.number ?? 0
-      const bn = b.number ?? 0
-      return an - bn
+      const aNumber = a.number ?? 0
+      const bNumber = b.number ?? 0
+      return aNumber - bNumber
     })
 })
 
 const seasonOptions = computed(() => {
-  const eps = episodesQuery.data.value
-  if (!eps?.length) {
+  if (!availableSeasons.value.length) {
     return []
   }
 
-  const seasons = [...new Set(eps.map((e) => e.season))].sort((a, b) => a - b)
-  return seasons.map((s) => ({
+  return availableSeasons.value.map((s) => ({
     value: String(s),
     label: t('common.pages.showDetails.episodes.seasonLabel', { n: s }),
   }))

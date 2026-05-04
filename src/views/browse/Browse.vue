@@ -6,13 +6,13 @@ import { useIntersectionObserverTarget } from '@/composables/useIntersectionObse
 import BrowseHeader from '@/features/browse/BrowseHeader.vue'
 import BrowseResultsSection from '@/features/browse/BrowseResultsSection.vue'
 import type { ShowsResponse } from '@/shared/types/show'
-import { showsByGenreBrowseInfiniteQueryOptions } from '@/shared/api/queries'
+import { showsPagesInfiniteQueryOptions } from '@/shared/api/queries'
 import { collectGenreShowsFromPages } from '@/shared/api/utils'
 
-/** Auto-prefetch at most this many index pages to avoid hammering the API for sparse genres. */
+// Auto-prefetch at most this many index pages to avoid hammering the API for sparse genres.
 const MAX_BROWSE_PREFETCH_PAGES = 5
 
-/** Stop prefetching once the grid has enough tiles or the page cap is hit. */
+// Stop prefetching once the grid has enough tiles or the page cap is hit.
 const MIN_GENRE_RESULTS_TO_FILL_VIEW = 12
 
 const props = defineProps<{
@@ -34,7 +34,7 @@ const browseQuery = useInfiniteQuery<
   InfiniteData<ShowsResponse, number>,
   readonly unknown[],
   number
->(() => showsByGenreBrowseInfiniteQueryOptions(props.category))
+>(() => showsPagesInfiniteQueryOptions(props.category))
 
 const filteredItems = computed(() =>
   collectGenreShowsFromPages(browseQuery.data.value?.pages, props.category)

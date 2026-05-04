@@ -3,11 +3,11 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UnderlineTabs from '@/components/UnderlineTabs.vue'
 import ShowDetailsCastPanel from '@/features/show-details/ShowDetailsCastPanel.vue'
-import ShowDetailsErrorState from '@/features/show-details/ShowDetailsErrorState.vue'
 import ShowDetailsHeroSection from '@/features/show-details/ShowDetailsHeroSection.vue'
-import ShowDetailsInvalidState from '@/features/show-details/ShowDetailsInvalidState.vue'
-import ShowDetailsLoadingState from '@/features/show-details/ShowDetailsLoadingState.vue'
 import ShowDetailsRelatedPanel from '@/features/show-details/ShowDetailsRelatedPanel.vue'
+import ShowDetailsStates, {
+  type ShowDetailsViewState,
+} from '@/features/show-details/ShowDetailsStates.vue'
 import ShowEpisodesPanel from '@/features/show-details/ShowEpisodesPanel.vue'
 import { useShowDetailQuery, useShowsByGenreQuery } from '@/shared/api/queries'
 import { relatedItemsFromGenreRails } from '@/shared/api/utils'
@@ -21,15 +21,31 @@ const props = defineProps<{
 const { t } = useI18n()
 
 const showId = computed(() => {
-  const n = Number.parseInt(props.id, 10)
-  return Number.isFinite(n) && n > 0 ? n : NaN
+  const routeId = props.id.trim()
+  if (!/^\d+$/.test(routeId)) {
+    return Number.NaN
+  }
+
+  return Number(routeId)
 })
 
-const invalidRouteId = computed(() => !Number.isFinite(showId.value))
+const showQuery = useShowDetailQuery(showId.value, 'cast')
+
+const showState = computed<ShowDetailsViewState | null>(() => {
+  if (!Number.isFinite(showId.value)) {
+    return 'invalid'
+  }
+  if (showQuery.isLoading.value) {
+    return 'loading'
+  }
+  if (showQuery.isError.value) {
+    return 'error'
+  }
+
+  return null
+})
 
 const activeTab = ref<'related' | 'details' | 'episodes'>('related')
-
-const showQuery = useShowDetailQuery(showId.value, 'cast')
 
 const genreRailsQuery = useShowsByGenreQuery()
 
@@ -46,12 +62,12 @@ const relatedRailItems = computed(() => {
 })
 
 const summaryPlain = computed(() => {
-  const raw = showQuery.data.value?.summary
-  if (!raw) {
+  const summary = showQuery.data.value?.summary
+  if (!summary) {
     return ''
   }
 
-  return stripHtml(raw)
+  return stripHtml(summary)
 })
 
 const heroImage = computed(
@@ -71,18 +87,7 @@ const castMembers = computed((): Person[] => {
     return []
   }
 
-  const seen = new Set<number>()
-  const out: Person[] = []
-  for (const c of list) {
-    if (seen.has(c.person.id)) {
-      continue
-    }
-
-    seen.add(c.person.id)
-    out.push(c.person)
-  }
-
-  return out
+  return list.map((c) => c.person)
 })
 
 const tabs = computed(() => [
@@ -97,9 +102,7 @@ const tabs = computed(() => [
     class="bg-background text-foreground xs:px-5 min-h-screen px-4 pb-5 sm:px-6 sm:pb-8 lg:px-8"
     data-testid="show-details-page"
   >
-    <ShowDetailsInvalidState v-if="invalidRouteId" />
-    <ShowDetailsLoadingState v-else-if="showQuery.isLoading.value" />
-    <ShowDetailsErrorState v-else-if="showQuery.isError.value" />
+    <ShowDetailsStates v-if="showState" :state="showState" />
 
     <template v-else-if="showQuery.data.value">
       <ShowDetailsHeroSection
@@ -121,7 +124,6 @@ const tabs = computed(() => [
           v-show="activeTab === 'related'"
           :is-loading="genreRailsQuery.isLoading.value"
           :is-error="genreRailsQuery.isError.value"
-          :genres-display="genresDisplay"
           :related-rail-items="relatedRailItems"
         />
 

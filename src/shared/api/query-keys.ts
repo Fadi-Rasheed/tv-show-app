@@ -7,7 +7,6 @@ export const showQueryKeys = {
       : ([...showQueryKeys.all, 'list', page] as const),
 
   browseGenre: (categorySlug: string) => [...showQueryKeys.all, 'browse', categorySlug] as const,
-  /** Include `embed` in the key when present so cache differentiates embedded responses. */
   detail: (id: number, embed?: string) =>
     embed === undefined || embed === ''
       ? ([...showQueryKeys.all, 'detail', id] as const)

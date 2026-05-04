@@ -39,11 +39,18 @@ const buildUrl = (path: string, query?: FetchApiOptions['query']) => {
 
 export const fetchApi = async <T>(path: string, options: FetchApiOptions = {}): Promise<T> => {
   const { query, headers, body, ...rest } = options
-  const isJsonBody = body != null && !(body instanceof FormData)
+  const hasBody = body !== undefined
+
+  const isJsonBody = hasBody && !(body instanceof FormData)
+  let requestBody: BodyInit | undefined
+
+  if (hasBody) {
+    requestBody = isJsonBody ? JSON.stringify(body) : body
+  }
 
   const response = await fetch(buildUrl(path, query), {
     ...rest,
-    body: body == null ? undefined : isJsonBody ? JSON.stringify(body) : body,
+    body: requestBody,
     headers: {
       ...(isJsonBody ? { 'Content-Type': 'application/json' } : {}),
       ...headers,
@@ -59,12 +66,8 @@ export const fetchApi = async <T>(path: string, options: FetchApiOptions = {}): 
   return data as T
 }
 
-/**
- * TVMaze `/shows?page=:num` returns 404 when the page is past the end of the index.
- * Treat that as an empty page so infinite pagination can stop without throwing.
- */
-export const fetchShowsIndexPage = async (page: number): Promise<ShowsResponse> => {
-  const response = await fetch(buildUrl('/shows', { page }), {
+export const fetchShowsIndexPage = async (page?: number): Promise<ShowsResponse> => {
+  const response = await fetch(buildUrl('/shows', page === undefined ? undefined : { page }), {
     headers: { Accept: 'application/json' },
   })
 

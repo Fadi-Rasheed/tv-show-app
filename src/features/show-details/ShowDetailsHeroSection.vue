@@ -19,7 +19,7 @@ const { t } = useI18n()
   <header class="bg-background relative -mx-4 mb-6 overflow-hidden sm:-mx-5 lg:-mx-8">
     <img
       :alt="showName"
-      class="absolute inset-0 h-full min-h-[420px] w-full object-cover object-center sm:max-h-[768px] sm:min-h-[480px] lg:w-[90%] xl:w-[80%] 2xl:w-[70%]"
+      class="absolute inset-0 h-full min-h-[420px] w-full object-cover object-center sm:max-h-[768px] sm:min-h-[640px] md:max-h-[960px] md:min-h-[768px] lg:w-[80%] xl:w-[70%] 2xl:w-[60%]"
       :src="heroImage"
       loading="eager"
     />
@@ -28,11 +28,11 @@ const { t } = useI18n()
       aria-hidden="true"
     />
     <div
-      class="absolute inset-y-0 right-0 hidden w-1/2 bg-[linear-gradient(to_right,rgba(10,6,24,0)_0%,rgba(10,6,24,0.35)_15%,rgba(10,6,24,0.78)_30%,rgba(10,6,24,1)_50%)] lg:block xl:w-[40%] 2xl:w-[60%]"
+      class="absolute inset-y-0 right-0 hidden w-1/2 bg-[linear-gradient(to_right,rgba(10,6,24,0)_0%,rgba(10,6,24,0.35)_15%,rgba(10,6,24,0.78)_30%,rgba(10,6,24,1)_50%)] lg:block lg:w-[40%] xl:w-[55%] 2xl:w-[65%]"
       aria-hidden="true"
     />
     <div
-      class="relative z-10 px-4 pt-[220px] pb-6 sm:px-6 sm:pt-[280px] sm:pb-8 lg:px-8 lg:pt-[220px]"
+      class="relative z-10 px-4 pt-[220px] pb-6 sm:px-6 sm:pt-[360px] sm:pb-8 md:pt-[360px] lg:px-8"
     >
       <h1
         class="font-header text-foreground sm:text-header-lg mb-3 text-2xl leading-tight font-bold tracking-tight"

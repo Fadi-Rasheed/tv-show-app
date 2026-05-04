@@ -7,7 +7,6 @@ import type { RailShowItem } from '@/shared/api/utils'
 defineProps<{
   isLoading: boolean
   isError: boolean
-  genresDisplay: string[]
   relatedRailItems: RailShowItem[]
 }>()
 
@@ -42,14 +41,6 @@ const { t } = useI18n()
         {{ t('common.pages.showDetails.errorDescription') }}
       </p>
     </div>
-
-    <p
-      v-else-if="!genresDisplay.length"
-      class="text-muted sm:text-body-md text-sm"
-      data-testid="related-empty-genre"
-    >
-      {{ t('common.pages.showDetails.related.empty') }}
-    </p>
 
     <p
       v-else-if="!relatedRailItems.length"

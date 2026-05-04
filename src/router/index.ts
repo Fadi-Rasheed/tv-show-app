@@ -14,15 +14,15 @@ export const router = createRouter({
       component: Home,
     },
     {
+      path: '/search',
+      name: 'search',
+      component: Search,
+    },
+    {
       path: '/show-details/:id',
       name: 'show-details',
       component: ShowDetails,
       props: true,
-    },
-    {
-      path: '/search',
-      name: 'search',
-      component: Search,
     },
     {
       path: '/browse/:category',

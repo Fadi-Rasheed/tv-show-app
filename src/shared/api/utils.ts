@@ -14,7 +14,6 @@ export type GenreRail = {
   items: RailShowItem[]
 }
 
-/** Browse grid item with nullable average for the same rating copy as search. */
 export type GenreBrowseShowItem = {
   id: number
   title: string
@@ -30,12 +29,7 @@ const FALLBACK_SHOW_IMAGE: ShowImage = {
   original: FALLBACK_SHOW_IMAGE_URL,
 }
 
-export const toCategorySlug = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replaceAll(/[^a-z0-9]+/g, '-')
-    .replaceAll(/(^-|-$)/g, '')
+export const toCategorySlug = (value: string) => value.trim().toLowerCase()
 
 /**
  * Browse match: true if `categorySlug` equals the slug for **any** string in `show.genres`
@@ -43,16 +37,14 @@ export const toCategorySlug = (value: string) =>
  */
 export const showMatchesBrowseCategory = (show: Show, categorySlug: string): boolean => {
   const genres = Array.isArray(show.genres) ? show.genres : []
+  const normalizedCategorySlug = toCategorySlug(categorySlug)
 
-  return genres.some((g) => {
-    if (typeof g !== 'string') {
+  return genres.some((genre) => {
+    if (typeof genre !== 'string') {
       return false
     }
-    const trimmed = g.trim()
-    if (!trimmed) {
-      return false
-    }
-    return toCategorySlug(trimmed) === toCategorySlug(categorySlug)
+
+    return normalizedCategorySlug && toCategorySlug(genre) === normalizedCategorySlug
   })
 }
 
@@ -106,7 +98,6 @@ export const collectGenreShowsFromPages = (
     return []
   }
 
-  const seen = new Set<number>()
   const items: GenreBrowseShowItem[] = []
 
   for (const page of pages) {
@@ -114,10 +105,6 @@ export const collectGenreShowsFromPages = (
       if (!showMatchesBrowseCategory(show, categorySlug)) {
         continue
       }
-      if (seen.has(show.id)) {
-        continue
-      }
-      seen.add(show.id)
       items.push({
         id: show.id,
         title: show.name,
@@ -131,7 +118,6 @@ export const collectGenreShowsFromPages = (
   return items
 }
 
-/** Related rail items from cached genre rails (same source as `useShowsByGenreQuery`). */
 export const relatedItemsFromGenreRails = (
   genreRails: GenreRail[] | undefined,
   options: { excludeId: number; genres: string[] }
@@ -140,8 +126,7 @@ export const relatedItemsFromGenreRails = (
     return []
   }
 
-  const showIdsAlreadyIncluded = new Set<number>()
-  const uniqueRelatedItems: RailShowItem[] = []
+  const relatedItemsByShowId = new Map<number, RailShowItem>()
 
   for (const genre of options.genres) {
     const rail = genreRails.find((r) => r.genre === genre)
@@ -153,13 +138,12 @@ export const relatedItemsFromGenreRails = (
       if (item.id === options.excludeId) {
         continue
       }
-      if (showIdsAlreadyIncluded.has(item.id)) {
+      if (relatedItemsByShowId.has(item.id)) {
         continue
       }
-      showIdsAlreadyIncluded.add(item.id)
-      uniqueRelatedItems.push(item)
+      relatedItemsByShowId.set(item.id, item)
     }
   }
 
-  return uniqueRelatedItems.sort(sortByRatingDescending)
+  return [...relatedItemsByShowId.values()].sort(sortByRatingDescending)
 }

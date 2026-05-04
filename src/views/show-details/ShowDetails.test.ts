@@ -115,4 +115,14 @@ describe('ShowDetails view', () => {
 
     expect(screen.getByTestId('show-details-title').textContent).toContain('Example Show')
   })
+
+  it('treats floating route ids as invalid', () => {
+    queryMocks.useShowDetailQuery.mockReturnValue(createDetailState())
+    queryMocks.useShowsByGenreQuery.mockReturnValue(createGenreRailsState())
+    queryMocks.useShowEpisodesQuery.mockReturnValue(createEpisodesState())
+
+    renderShowDetails('1.5')
+
+    expect(screen.getByTestId('show-details-invalid')).toBeTruthy()
+  })
 })
