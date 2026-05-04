@@ -8,6 +8,17 @@ const NotFound = () => import('@/views/not-found/NotFound.vue')
 
 export const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to, _from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+
+    if (to.hash) {
+      return { el: to.hash, top: 0 }
+    }
+
+    return { top: 0 }
+  },
   routes: [
     {
       path: '/',

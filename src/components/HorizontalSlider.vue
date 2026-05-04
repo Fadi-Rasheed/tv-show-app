@@ -99,7 +99,7 @@ onUnmounted(() => {
 @config '../../tailwind.config.ts';
 
 .slider-arrow-button {
-  @apply bg-surface/85 text-foreground ring-ring pointer-events-auto hidden h-16 w-16 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-md transition lg:flex;
+  @apply bg-surface/85 text-foreground ring-ring pointer-events-auto flex h-12 w-12 cursor-pointer items-center justify-center rounded-full opacity-100 shadow-md transition sm:h-14 sm:w-14 lg:h-16 lg:w-16 lg:opacity-0;
   @apply group-focus-within/slider:opacity-100 group-hover/slider:opacity-100 focus-visible:opacity-100 focus-visible:ring-2;
 }
 
