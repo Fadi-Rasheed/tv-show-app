@@ -11,11 +11,6 @@
     "actionAndAdventure": "Action and Adventure"
   },
   "components": {
-    "filterDropdown": {
-      "label": "Filter by genre",
-      "openAriaLabel": "Open filter options",
-      "listAriaLabel": "Filter options"
-    },
     "spinner": {
       "loading": "Loading"
     },
