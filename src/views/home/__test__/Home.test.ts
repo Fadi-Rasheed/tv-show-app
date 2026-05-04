@@ -3,6 +3,7 @@
 import { ref } from 'vue'
 import { render, screen } from '@testing-library/vue'
 import { createI18n } from 'vue-i18n'
+import { createPinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Home from '@/views/home/Home.vue'
 import commonEn from '@/shared/i18n/locales/en/common.json'
@@ -41,10 +42,12 @@ const i18n = createI18n({
   },
 })
 
+let pinia: ReturnType<typeof createPinia>
+
 const renderHome = () =>
   render(Home, {
     global: {
-      plugins: [i18n],
+      plugins: [i18n, pinia],
       stubs: {
         RouterLink: {
           template: '<a><slot /></a>',
@@ -55,6 +58,7 @@ const renderHome = () =>
 
 describe('Home view', () => {
   beforeEach(() => {
+    pinia = createPinia()
     useShowsByGenreQueryMock.mockReset()
   })
 

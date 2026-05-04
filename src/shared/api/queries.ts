@@ -36,15 +36,19 @@ export const useShowsByGenreQuery = (
 ): ReturnType<typeof useQuery<ShowsResponse, DefaultError, GenreRail[]>> =>
   useShowsQuery(page, buildGenreRails)
 
-export const useShowDetailQuery = (showId: number, embed?: string) =>
-  useQuery<ShowWithEmbedded>({
-    queryKey: showQueryKeys.detail(showId, embed),
-    queryFn: () =>
-      fetchApi<ShowWithEmbedded>(
-        `/shows/${showId}`,
-        embed === undefined || embed === '' ? {} : { query: { embed } }
-      ),
-    enabled: Boolean(showId),
+export const useShowDetailQuery = (getShowId: () => number, embed?: string) =>
+  useQuery<ShowWithEmbedded>(() => {
+    const id = getShowId()
+
+    return {
+      queryKey: showQueryKeys.detail(id, embed),
+      queryFn: () =>
+        fetchApi<ShowWithEmbedded>(
+          `/shows/${id}`,
+          embed === undefined || embed === '' ? {} : { query: { embed } }
+        ),
+      enabled: Boolean(id),
+    }
   })
 
 export const useShowEpisodesQuery = (showId: number, enabled = true) =>

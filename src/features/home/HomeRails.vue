@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getActivePinia } from 'pinia'
 import Rail from '@/components/Rail.vue'
 import { useBrowseFiltersStore } from '@/stores/useBrowseFiltersStore'
 import type { GenreRail } from '@/shared/api/utils'
@@ -9,12 +8,9 @@ defineProps<{
   rails: GenreRail[]
 }>()
 
-const onBrowseMoreClick = (genre: ShowGenre) => {
-  if (!getActivePinia()) {
-    return
-  }
+const browseFiltersStore = useBrowseFiltersStore()
 
-  const browseFiltersStore = useBrowseFiltersStore()
+const onBrowseMoreClick = (genre: ShowGenre) => {
   browseFiltersStore.setSingleGenre(genre)
 }
 </script>

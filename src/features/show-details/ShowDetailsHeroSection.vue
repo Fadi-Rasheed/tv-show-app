@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getActivePinia } from 'pinia'
 import Rating from '@/components/Rating.vue'
 import { useBrowseFiltersStore } from '@/stores/useBrowseFiltersStore'
 import type { ShowGenre } from '@/shared/types/genre'
@@ -15,12 +14,9 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
-const onGenreClick = (genre: ShowGenre) => {
-  if (!getActivePinia()) {
-    return
-  }
+const browseFiltersStore = useBrowseFiltersStore()
 
-  const browseFiltersStore = useBrowseFiltersStore()
+const onGenreClick = (genre: ShowGenre) => {
   browseFiltersStore.setSingleGenre(genre)
 }
 </script>

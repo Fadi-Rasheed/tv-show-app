@@ -29,7 +29,7 @@ const showId = computed(() => {
   return Number(routeId)
 })
 
-const showQuery = useShowDetailQuery(showId.value, 'cast')
+const showQuery = useShowDetailQuery(() => showId.value, 'cast')
 
 const showState = computed<ShowDetailsViewState | null>(() => {
   if (!Number.isFinite(showId.value)) {

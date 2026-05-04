@@ -3,7 +3,8 @@
 import { ref } from 'vue'
 import { render, screen } from '@testing-library/vue'
 import { createI18n } from 'vue-i18n'
-import { describe, expect, it, vi } from 'vitest'
+import { createPinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import ShowDetails from '@/views/show-details/ShowDetails.vue'
 import type { GenreRail } from '@/shared/api/utils'
 import commonEn from '@/shared/i18n/locales/en/common.json'
@@ -80,11 +81,17 @@ const i18n = createI18n({
   },
 })
 
+let pinia: ReturnType<typeof createPinia>
+
+beforeEach(() => {
+  pinia = createPinia()
+})
+
 const renderShowDetails = (id = '1') =>
   render(ShowDetails, {
     props: { id },
     global: {
-      plugins: [i18n],
+      plugins: [i18n, pinia],
       stubs: {
         RouterLink: { template: '<a :href="to"><slot /></a>', props: ['to'] },
       },
