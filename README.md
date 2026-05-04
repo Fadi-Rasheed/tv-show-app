@@ -1,38 +1,66 @@
 # TV Show Dashboard
 
-A Vue 3 TV show browser for a **frontend developer assessment**: genre-grouped rails on the home screen (sorted by rating), show details, name search, and an optional browse experience—all backed by the public [TVMaze API](https://www.tvmaze.com/api).
+Browse and search television series powered by the public [TVMaze API](https://www.tvmaze.com/api): a responsive dashboard with genre-based discovery, full show pages, and fast search.
 
-## Assignment fit
+## Features by page
 
-This project implements the brief’s core requirements and documents how each is addressed.
+### Home (`/`)
 
-| Requirement                                     | Implementation                                                                                                 |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Vue.js**                                      | Vue 3, Composition API, `<script setup>`, TypeScript                                                           |
-| **Horizontal lists by genre**                   | Home: each genre is a horizontal rail (`HorizontalSlider` + `Rail`) built from the show index                  |
-| **Sort by rating**                              | Genre rails sort shows by `rating.average` descending (ties broken by title) in `buildGenreRails`              |
-| **Show details**                                | `/show-details/:id` loads a show with embedded relations where useful (cast, episodes, etc.)                   |
-| **Search by name**                              | `/search` uses TVMaze `/search/shows` with Vue Query; empty, loading, and error states                         |
-| **No dedicated “by genre” API**                 | Genres are **derived client-side** from the [Show index](https://www.tvmaze.com/api#show-index) paginated data |
-| **Responsive, mobile-friendly**                 | Tailwind breakpoints, touch-friendly controls, layout that works from narrow to wide                           |
-| **Minimal scaffolding / own structure**         | Standard Vite + Vue starter only; features, API layer, and UI composed in-repo                                 |
-| **Unit tests**                                  | Vitest + Testing Library + Vue Test Utils (see [Testing strategy](#testing-strategy))                          |
-| **README with architecture + run instructions** | This file                                                                                                      |
-| **Simple, eye-catching UI**                     | Dark theme, consistent typography tokens, cards and rails with clear hierarchy                                 |
+- Fetches the TVMaze **show index** and builds **one horizontal rail per genre**, with titles **sorted by rating** (highest first; title as tie-breaker).
+- **Loading**, **error**, and **empty** states so the first paint never feels broken.
+- Each tile links to the show’s detail route.
 
-**Extra (beyond the brief):** **Browse** (`/browse`) — paginated index of shows with genre-style filters and infinite-style loading for exploring the catalog.
+### Search (`/search`)
 
-## Tech stack and why
+- **Name search** with an accessible labeled field and **debounced** queries to limit API churn.
+- Result states for **initial hint**, **in progress**, **error**, **no matches**, and the results grid.
 
-- **Vue 3 + TypeScript** — Matches the employer stack preference; Composition API keeps logic colocated yet extractable.
-- **Vite** — Fast dev/build; no heavy custom tooling.
-- **Vue Router** — Route-based code splitting for details, search, browse, and home.
-- **Pinia** — Only for **client/UI state** that is not server-backed (e.g. browse filter preferences in `useBrowseFiltersStore`).
-- **TanStack Vue Query** — **Server state**: caching, stale times, retries, and derived `select` transforms (e.g. turning raw shows into genre rails). Avoids duplicating fetch lifecycle in components.
-- **Tailwind CSS v4** — Design tokens in `tailwind.config.ts`, utility-first responsive layout.
-- **vue-i18n** — User-visible strings centralized under `src/shared/i18n/` (no hardcoded copy in components where it matters).
-- **Lucide Vue** — Lightweight icons for nav affordances.
-- **Vitest** — Same ESM/TS pipeline as Vite; fast unit and component tests.
+### Browse (`/browse`)
+
+- Explores the catalog via **paginated show index** requests with **load more** (including an intersection-based sentinel).
+- **Multi-select genre filters** with a clear action; selections persist in **Pinia** while you move around the app.
+- **Prefetch** logic for sparse filter combinations so the grid can fill without extra taps.
+- Loading, error, and tailored empty states.
+
+### Show details (`/show-details/:id`)
+
+- **Hero** with artwork, summary, genres, and rating.
+- **Tabs**: **Related** (other highly rated titles that share genres), **Details** (cast from embedded API data), **Episodes** (per-show episode list).
+- Handles **invalid IDs**, **loading**, and **fetch errors** explicitly.
+
+Global **primary navigation** (home, browse, search) lives in the app chrome; details and inner flows use **back** affordances where appropriate.
+
+## State management (core design choice)
+
+The app deliberately **splits server state and client UI state** instead of folding everything into one store.
+
+### Why two tools
+
+| Concern                                                                                            | Tool                   | Role                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Remote data** — what the API returned, when it was fetched, cache freshness, retries             | **TanStack Vue Query** | Single source of truth for HTTP-backed data; query keys describe _what_ was fetched; components stay declarative.                                 |
+| **Ephemeral UI** — choices that are not “the server’s answer” but should survive a few navigations | **Pinia**              | Browse **genre filter selection** is the main example: it is user intent, not a REST resource, and should not be re-derived from Vue Query cache. |
+
+### Decisions this enables
+
+1. **No duplicated fetch logic** — Loading, error, refetch, and stale-while-revalidate behavior live in query defaults (`shared/providers/vue-query.ts`) and per-query options, not scattered in components.
+2. **Predictable caching** — List, detail, and search endpoints each have stable keys (`shared/api/query-keys.ts`); derived lists (e.g. genre rails) use Vue Query `select` so transforms stay composable and testable.
+3. **Clear mental model for contributors** — If it came over the wire and could be shared across routes, it belongs in Vue Query. If it is a **user toggle or filter** that is cheap to hold locally, it belongs in Pinia.
+4. **Easier testing** — Pure mappers and stores can be unit-tested without mounting a network stack; query hooks are tested with controlled clients/mocks.
+
+This separation is intentional: it keeps **server contracts** (URLs, JSON shapes, caching) away from **interaction state** (what the user filtered on last), which stays stable as the API or screens evolve.
+
+## Tech stack
+
+- **Vue 3 + TypeScript** — Composition API, `<script setup>`, strict typing at boundaries.
+- **Vite** — Dev and build tooling.
+- **Vue Router** — Lazy-loaded routes for smaller initial bundles.
+- **Pinia** — Client/UI state (see [State management](#state-management-core-design-choice)).
+- **TanStack Vue Query** — Server state, caching, retries, infinite queries.
+- **Tailwind CSS v4** — Tokens and responsive layout (`tailwind.config.ts`).
+- **vue-i18n** — Centralized copy under `src/shared/i18n/`.
+- **Lucide Vue** — Icons.
+- **Vitest + Vue Test Utils + Testing Library** — Unit and component tests.
 
 ## Architecture
 
@@ -62,8 +90,7 @@ src/
 
 1. **Views are thin** — They compose `features/*` and handle route props; heavy UI lives in feature folders.
 2. **API boundary is typed** — `fetchApi` throws `ApiError`; mappers turn API shapes into UI-ready models.
-3. **Genre rails are pure data** — `buildGenreRails` in `shared/api/utils.ts` takes the show index page(s) and outputs per-genre lists sorted by rating (TVMaze does not expose “primary” genre; a show appears under every genre label it has).
-4. **Server vs client state** — Vue Query owns fetched data; Pinia owns filter/UI toggles that should not be lost on navigation within browse.
+3. **Genre rails are derived data** — `buildGenreRails` in `shared/api/utils.ts` builds per-genre lists from the show index; a show appears under every genre label TVMaze provides (there is no separate “primary genre” field).
 
 ### Data flow (high level)
 
@@ -94,13 +121,13 @@ flowchart LR
 
 ### API base URL
 
-The client targets `https://api.tvmaze.com` via Vite’s `define.apiBaseUrl` in `vite.config.ts` (see `fetch.ts`).
+The client uses `https://api.tvmaze.com`, injected as `apiBaseUrl` in `vite.config.ts` (see `fetch.ts`).
 
 ## How to run
 
 ### Prerequisites
 
-- **Node.js**: **20+** recommended (Vite 8 / current toolchain). The project was verified with **Node v24.11.1**.
+- **Node.js**: **20+** recommended (Vite 8 / current toolchain). Verified with **Node v24.11.1**.
 - **npm**: **10+** works; verified with **npm 11.6.2**.
 
 ### Commands
@@ -109,7 +136,7 @@ The client targets `https://api.tvmaze.com` via Vite’s `define.apiBaseUrl` in 
 npm install          # install dependencies
 npm run dev          # dev server → http://localhost:5173
 npm run build        # vue-tsc + production bundle
-npm run preview      # serve the production build locally
+npm run preview      # locally serve the production build
 npm run lint         # ESLint
 npm run format       # Prettier (check)
 npm run format:write # Prettier (fix)
@@ -131,4 +158,4 @@ npm run test:coverage
   - **API layer**: `fetchApi` behavior, query key stability, query hooks (mocked network).
   - **Stores**: browse filter store.
   - **Components/features**: rails, search and browse sections, show detail states, nav/app smoke behavior.
-- **What is not claimed**: full E2E in a browser; the focus is fast, deterministic unit/component tests with mocks.
+- **What is not claimed**: full E2E in a browser; the focus is fast, deterministic unit and component tests with mocks.
