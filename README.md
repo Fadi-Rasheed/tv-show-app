@@ -10,7 +10,7 @@ Browse and search television series powered by the public [TVMaze API](https://w
 
 ### Home (`/`)
 
-- Fetches the TVMaze **show index** and builds **one horizontal rail per genre**, with titles **sorted by rating** (highest first; title as tie-breaker).
+- Fetches the TVMaze **show index** and builds **one horizontal rail per genre**, with titles **sorted by rating** (highest first, title as tie-breaker).
 - **Loading**, **error**, and **empty** states so the first paint never feels broken.
 - Each tile links to the show’s detail route.
 
@@ -22,7 +22,7 @@ Browse and search television series powered by the public [TVMaze API](https://w
 ### Browse (`/browse`)
 
 - Explores the catalog via **paginated show index** requests: **load more** wires **Intersection Observer** to a **scroll anchor** under the grid, so **additional API calls run as you scroll** when that marker enters the viewport.
-- **Multi-select genre filters** with a clear action; selections persist in **Pinia** while you move around the app.
+- **Multi-select genre filters** with a clear action, selections persist in **Pinia** while you move around the app.
 - **Prefetch** logic for sparse filter combinations so the grid can fill without extra taps.
 - Loading, error, and tailored empty states.
 
@@ -32,7 +32,7 @@ Browse and search television series powered by the public [TVMaze API](https://w
 - **Tabs**: **Related** (other highly rated titles that share genres), **Details** (cast from the same show request via `embed=cast`), **Episodes** (fetches `/shows/:id/episodes` when you select the tab—the panel mounts on demand).
 - Handles **invalid IDs**, **loading**, and **fetch errors** explicitly.
 
-Global **primary navigation** (home, browse, search) lives in the app chrome; details and inner flows use **back** affordances where appropriate.
+The **primary navigation bar** (home, browse, search) is always visible at the top of every page, detail pages and inner flows include a **back button** to return to the previous screen.
 
 ## State management (core design choice)
 
@@ -42,15 +42,15 @@ The app deliberately **splits server state and client UI state** instead of fold
 
 | Concern                                                                                     | Tool                   | Role                                                                                                                                              |
 | ------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Remote data** — what the API returned, when it was fetched, cache freshness, retries      | **TanStack Vue Query** | Single source of truth for HTTP-backed data; query keys describe _what_ was fetched; components stay declarative.                                 |
+| **Remote data** — what the API returned, when it was fetched, cache freshness, retries      | **TanStack Vue Query** | Single source of truth for server data, query keys describe _what_ was fetched, components stay declarative.                                      |
 | **Local UI state** — not the API payload, but choices that should survive a few navigations | **Pinia**              | Browse **genre filter selection** is the main example: it is user intent, not a REST resource, and should not be re-derived from Vue Query cache. |
 
 ### Decisions this enables
 
 1. **No duplicated fetch logic** — Loading, error, refetch, and stale-while-revalidate behavior live in query defaults (`shared/providers/vue-query.ts`) and per-query options, not scattered in components.
-2. **Predictable caching** — List, detail, and search endpoints each have stable keys (`shared/api/query-keys.ts`); derived lists (e.g. genre rails) use Vue Query `select` so transforms stay composable and testable.
+2. **Predictable caching** — List, detail, and search endpoints each have stable keys (`shared/api/query-keys.ts`), derived lists (e.g. genre rails) use Vue Query `select` so transforms stay composable and testable.
 3. **Clear mental model for contributors** — If it came over the wire and could be shared across routes, it belongs in Vue Query. If it is a **user toggle or filter** that is cheap to hold locally, it belongs in Pinia.
-4. **Easier testing** — Pure mappers and stores can be unit-tested without mounting a network stack; query hooks are tested with controlled clients/mocks.
+4. **Easier testing** — Pure mappers and stores can be unit-tested without mounting a network stack, query hooks are tested with controlled clients/mocks.
 
 This separation is intentional: it keeps **server contracts** (URLs, JSON shapes, caching) away from **interaction state** (what the user filtered on last), which stays stable as the API or screens evolve.
 
@@ -102,9 +102,9 @@ src/
 
 ### Principles
 
-1. **Views are thin** — They compose `features/*` and handle route props; heavy UI lives in feature folders.
-2. **API boundary is typed** — `fetchApi` throws `ApiError`; mappers turn API shapes into UI-ready models.
-3. **Genre rails are derived data** — `buildGenreRails` in `shared/api/utils.ts` builds per-genre lists from the show index; a show appears under every genre label TVMaze provides (there is no separate “primary genre” field).
+1. **Views are thin** — They compose `features/*` and handle route props, heavy UI lives in feature folders.
+2. **API boundary is typed** — `fetchApi` throws `ApiError`, mappers turn API shapes into UI-ready models.
+3. **Genre rails are derived data** — `buildGenreRails` in `shared/api/utils.ts` builds per-genre lists from the show index, a show appears under every genre label TVMaze provides (there is no separate “primary genre” field).
 
 ### Data flow (high level)
 
@@ -144,8 +144,8 @@ The client uses `https://api.tvmaze.com`, injected as `apiBaseUrl` in `vite.conf
 
 ### What you need
 
-- **Node.js**: **20+** recommended (Vite 8 / current toolchain). Verified with **Node v24.11.1**.
-- **npm**: **10+** works; verified with **npm 11.6.2**.
+- **Node.js**: **24.11.1+**
+- **npm**: **11.6.2+**.
 
 ### Commands
 
