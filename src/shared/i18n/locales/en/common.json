@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Home",
+    "browse": "Browse",
     "search": "Search"
   },
   "actions": {
@@ -30,15 +31,21 @@
   },
   "pages": {
     "browse": {
-      "title": "Browse: {category}",
-      "description": "Discover more shows tagged with this genre. Results load as you scroll.",
-      "resultsRegionAria": "Genre browse results",
+      "title": "Browse Shows",
+      "description": "Explore all shows. Use genre badges to filter results. More shows load as you scroll.",
+      "resultsRegionAria": "Browse results",
       "tileAriaLabel": "{title}, {rating}",
+      "filters": {
+        "title": "Filter by genres",
+        "clearAll": "Clear all",
+        "regionAria": "Genre filters",
+        "listAria": "Genre filter options"
+      },
       "states": {
         "loading": "Loading shows",
         "loadingMore": "Loading more shows",
         "findingShows": "Searching catalog for matching shows…",
-        "noResults": "No {category} shows were found in the catalog.",
+        "noResults": "No shows match the selected filters.",
         "errorTitle": "We couldn't load shows right now.",
         "errorDescription": "Please try again in a moment."
       }

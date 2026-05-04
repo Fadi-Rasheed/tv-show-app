@@ -6,7 +6,7 @@ export const showQueryKeys = {
       ? ([...showQueryKeys.all, 'list'] as const)
       : ([...showQueryKeys.all, 'list', page] as const),
 
-  browseGenre: (categorySlug: string) => [...showQueryKeys.all, 'browse', categorySlug] as const,
+  browse: () => [...showQueryKeys.all, 'browse'] as const,
   detail: (id: number, embed?: string) =>
     embed === undefined || embed === ''
       ? ([...showQueryKeys.all, 'detail', id] as const)

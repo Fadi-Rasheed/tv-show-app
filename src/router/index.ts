@@ -19,15 +19,14 @@ export const router = createRouter({
       component: Search,
     },
     {
+      path: '/browse',
+      name: 'browse',
+      component: Browse,
+    },
+    {
       path: '/show-details/:id',
       name: 'show-details',
       component: ShowDetails,
-      props: true,
-    },
-    {
-      path: '/browse/:category',
-      name: 'browse',
-      component: Browse,
       props: true,
     },
   ],

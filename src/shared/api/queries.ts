@@ -9,14 +9,13 @@ import { showQueryKeys } from './query-keys'
 import { buildGenreRails } from './utils'
 import type { GenreRail } from './utils'
 
-export const showsPagesInfiniteQueryOptions = (queryKeyPart: string) => ({
-  queryKey: showQueryKeys.browseGenre(queryKeyPart),
+export const showsPagesInfiniteQueryOptions = () => ({
+  queryKey: showQueryKeys.browse(),
   queryFn: (context: QueryFunctionContext<readonly unknown[], number>) =>
     fetchShowsIndexPage(context.pageParam),
   initialPageParam: 0,
   getNextPageParam: (lastPage: ShowsResponse, _allPages: ShowsResponse[], lastPageParam: number) =>
     lastPage.length === 0 ? undefined : lastPageParam + 1,
-  enabled: queryKeyPart.length > 0,
 })
 
 type ShowsQueryResult<TData> = ReturnType<typeof useQuery<ShowsResponse, DefaultError, TData>>

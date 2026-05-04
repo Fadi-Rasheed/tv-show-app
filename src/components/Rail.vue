@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { ChevronRight } from 'lucide-vue-next'
 import HorizontalSlider from '@/components/HorizontalSlider.vue'
 import Tile from '@/components/Tile.vue'
+import type { ShowGenre } from '@/shared/types/genre'
 
 type RailItem = {
   id: number | string
@@ -18,7 +19,7 @@ type RailItem = {
 }
 
 export type RailBrowseMore = {
-  categorySlug: string
+  genre: ShowGenre
   showBrowseMore: boolean
 }
 
@@ -36,20 +37,33 @@ const props = withDefaults(
   }
 )
 
+const emit = defineEmits<{
+  browseMoreClick: [ShowGenre]
+}>()
+
 const { t } = useI18n()
 const fallbackImageUrl = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png'
 
 const visibleItems = computed(() => props.items.slice(0, props.maxItems))
 
 const showBrowseMoreHeaderLink = computed(() => {
-  const { categorySlug, showBrowseMore } = props.browseMore ?? {}
-  return Boolean(showBrowseMore && categorySlug)
+  const { genre, showBrowseMore } = props.browseMore ?? {}
+  return Boolean(showBrowseMore && genre)
 })
 
 const showBrowseMoreTile = computed(() => {
-  const { categorySlug, showBrowseMore } = props.browseMore ?? {}
-  return Boolean(showBrowseMore && categorySlug && props.items.length > props.maxItems)
+  const { genre, showBrowseMore } = props.browseMore ?? {}
+  return Boolean(showBrowseMore && genre && props.items.length > props.maxItems)
 })
+
+const onBrowseMoreClick = () => {
+  const browseGenre = props.browseMore?.genre
+  if (!browseGenre) {
+    return
+  }
+
+  emit('browseMoreClick', browseGenre)
+}
 </script>
 
 <template>
@@ -65,8 +79,9 @@ const showBrowseMoreTile = computed(() => {
 
       <RouterLink
         v-if="showBrowseMoreHeaderLink"
-        :to="{ name: 'browse', params: { category: browseMore!.categorySlug } }"
+        :to="{ name: 'browse' }"
         class="text-muted hover:text-foreground focus-visible:ring-ring xs:text-sm inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition focus-visible:ring-2 focus-visible:outline-none"
+        @click="onBrowseMoreClick"
       >
         <span>{{ t('common.actions.seeMore') }}</span>
         <ChevronRight aria-hidden="true" class="h-4 w-4" />
@@ -93,9 +108,10 @@ const showBrowseMoreTile = computed(() => {
 
       <RouterLink
         v-if="showBrowseMoreTile"
-        :to="{ name: 'browse', params: { category: browseMore!.categorySlug } }"
+        :to="{ name: 'browse' }"
         :aria-label="t('common.components.rail.seeMoreTileAriaLabel')"
         class="rail-tile-link"
+        @click="onBrowseMoreClick"
       >
         <div class="rail-see-more-tile group" data-testid="see-more-tile">
           <span

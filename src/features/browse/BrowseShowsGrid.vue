@@ -14,11 +14,10 @@ const { t } = useI18n()
 
 <template>
   <ul
-    class="m-0 flex min-w-0 list-none flex-wrap items-start justify-start gap-x-3 gap-y-6 p-0 sm:gap-x-4 sm:gap-y-8"
-    :aria-setsize="items.length"
+    class="m-0 flex w-full min-w-0 list-none flex-wrap items-start justify-around gap-x-3 gap-y-6 p-0 sm:gap-x-4 sm:gap-y-8 lg:justify-start"
   >
     <li
-      v-for="(item, index) in items"
+      v-for="item in items"
       :key="item.id"
       class="basis-poster-tile-sm sm:basis-poster-tile-md md:basis-poster-tile-lg shrink-0 grow-0"
     >
@@ -31,7 +30,6 @@ const { t } = useI18n()
             rating: formatRating(item.ratingAverage),
           })
         "
-        :aria-posinset="index + 1"
       >
         <Tile
           :image-url="item.image.medium ?? item.image.original"

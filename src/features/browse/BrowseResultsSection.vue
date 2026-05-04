@@ -16,7 +16,6 @@ defineProps<{
   showEmptyWhileSearching: boolean
   hasItems: boolean
   items: GenreBrowseShowItem[]
-  categoryTitle: string
   hasNextPage: boolean
   isFetchingNextPage: boolean
   formatRating: (average: number | null) => string
@@ -41,7 +40,7 @@ const { t } = useI18n()
     <BrowseErrorState v-else-if="isError" />
 
     <template v-else>
-      <BrowseNoResultsState v-if="showNoResults" :category-title="categoryTitle" />
+      <BrowseNoResultsState v-if="showNoResults" />
 
       <template v-else>
         <BrowseFindingShowsState v-if="showEmptyWhileSearching" />

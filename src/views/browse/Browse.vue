@@ -3,30 +3,24 @@ import { computed, watch } from 'vue'
 import { useInfiniteQuery, type DefaultError, type InfiniteData } from '@tanstack/vue-query'
 import { useI18n } from 'vue-i18n'
 import { useIntersectionObserverTarget } from '@/composables/useIntersectionObserverTarget'
+import BrowseGenreFilters from '@/features/browse/BrowseGenreFilters.vue'
 import BrowseHeader from '@/features/browse/BrowseHeader.vue'
 import BrowseResultsSection from '@/features/browse/BrowseResultsSection.vue'
+import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
 import type { ShowsResponse } from '@/shared/types/show'
 import { showsPagesInfiniteQueryOptions } from '@/shared/api/queries'
-import { collectGenreShowsFromPages } from '@/shared/api/utils'
+import { collectBrowseShowsFromPages } from '@/shared/api/utils'
+import type { ShowGenre } from '@/shared/types/genre'
+import { SHOW_GENRES } from '@/shared/types/genre'
 
 // Auto-prefetch at most this many index pages to avoid hammering the API for sparse genres.
-const MAX_BROWSE_PREFETCH_PAGES = 5
+const MAX_BROWSE_PREFETCH_PAGES = 2
 
 // Stop prefetching once the grid has enough tiles or the page cap is hit.
-const MIN_GENRE_RESULTS_TO_FILL_VIEW = 12
-
-const props = defineProps<{
-  category: string
-}>()
+const MIN_GENRE_RESULTS_TO_FILL_VIEW = 10
 
 const { t } = useI18n()
-
-const categoryTitle = computed(() => {
-  return props.category
-    .split('-')
-    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join(' ')
-})
+const browseFiltersStore = useBrowseFiltersStore()
 
 const browseQuery = useInfiniteQuery<
   ShowsResponse,
@@ -34,10 +28,10 @@ const browseQuery = useInfiniteQuery<
   InfiniteData<ShowsResponse, number>,
   readonly unknown[],
   number
->(() => showsPagesInfiniteQueryOptions(props.category))
+>(() => showsPagesInfiniteQueryOptions())
 
 const filteredItems = computed(() =>
-  collectGenreShowsFromPages(browseQuery.data.value?.pages, props.category)
+  collectBrowseShowsFromPages(browseQuery.data.value?.pages, browseFiltersStore.selectedGenres)
 )
 
 const prefetchPagesLoaded = computed(() => browseQuery.data.value?.pages.length ?? 0)
@@ -107,6 +101,14 @@ const onLoadMore = () => {
 const onSentinelChange = (el: HTMLElement | null) => {
   loadMoreSentinel.value = el
 }
+
+const onToggleGenre = (genre: ShowGenre) => {
+  browseFiltersStore.toggleGenre(genre)
+}
+
+const onClearGenres = () => {
+  browseFiltersStore.clearGenres()
+}
 </script>
 
 <template>
@@ -114,7 +116,13 @@ const onSentinelChange = (el: HTMLElement | null) => {
     class="bg-background text-foreground xs:px-5 min-h-screen px-4 py-5 sm:px-6 sm:py-8 lg:px-8"
     data-testid="browse-page"
   >
-    <BrowseHeader :category-title="categoryTitle" />
+    <BrowseHeader />
+    <BrowseGenreFilters
+      :genres="SHOW_GENRES"
+      :selected-genres="browseFiltersStore.selectedGenres"
+      @toggle-genre="onToggleGenre"
+      @clear-genres="onClearGenres"
+    />
     <BrowseResultsSection
       :is-fetching="browseQuery.isFetching.value"
       :is-pending="browseQuery.isPending.value"
@@ -123,7 +131,6 @@ const onSentinelChange = (el: HTMLElement | null) => {
       :show-empty-while-searching="showEmptyWhileSearching"
       :has-items="filteredItems.length > 0"
       :items="filteredItems"
-      :category-title="categoryTitle"
       :has-next-page="browseQuery.hasNextPage.value"
       :is-fetching-next-page="browseQuery.isFetchingNextPage.value"
       :format-rating="formatRating"

@@ -1,3 +1,4 @@
+import type { ShowGenre } from '@/shared/types/genre'
 import type { Show, ShowImage, ShowsResponse } from '@/shared/types/show'
 
 export type RailShowItem = {
@@ -5,11 +6,11 @@ export type RailShowItem = {
   title: string
   image: ShowImage
   rating: number
-  genres: string[]
+  genres: ShowGenre[]
 }
 
 export type GenreRail = {
-  genre: string
+  genre: ShowGenre
   categorySlug: string
   items: RailShowItem[]
 }
@@ -19,7 +20,7 @@ export type GenreBrowseShowItem = {
   title: string
   image: ShowImage
   ratingAverage: number | null
-  genres: string[]
+  genres: ShowGenre[]
 }
 
 const FALLBACK_SHOW_IMAGE_URL = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png'
@@ -65,7 +66,7 @@ const sortByRatingDescending = (left: RailShowItem, right: RailShowItem) => {
 }
 
 export const buildGenreRails = (shows: ShowsResponse): GenreRail[] => {
-  const railsByGenre = new Map<string, RailShowItem[]>()
+  const railsByGenre = new Map<ShowGenre, RailShowItem[]>()
 
   for (const show of shows) {
     for (const genre of show.genres) {
@@ -90,28 +91,41 @@ export const buildGenreRails = (shows: ShowsResponse): GenreRail[] => {
     .sort((left, right) => left.genre.localeCompare(right.genre))
 }
 
-export const collectGenreShowsFromPages = (
+const showHasGenre = (show: Show, genre: ShowGenre) => {
+  const genres = Array.isArray(show.genres) ? show.genres : []
+  return genres.includes(genre)
+}
+
+const toBrowseShowItem = (show: Show): GenreBrowseShowItem => ({
+  id: show.id,
+  title: show.name,
+  image: show.image ?? FALLBACK_SHOW_IMAGE,
+  ratingAverage: show.rating.average,
+  genres: show.genres,
+})
+
+export const collectBrowseShowsFromPages = (
   pages: ShowsResponse[] | undefined,
-  categorySlug: string
+  selectedGenres: ShowGenre[]
 ): GenreBrowseShowItem[] => {
   if (!pages?.length) {
     return []
   }
 
+  const hasFilters = selectedGenres.length > 0
   const items: GenreBrowseShowItem[] = []
 
   for (const page of pages) {
     for (const show of page) {
-      if (!showMatchesBrowseCategory(show, categorySlug)) {
+      if (!hasFilters) {
+        items.push(toBrowseShowItem(show))
         continue
       }
-      items.push({
-        id: show.id,
-        title: show.name,
-        image: show.image ?? FALLBACK_SHOW_IMAGE,
-        ratingAverage: show.rating.average,
-        genres: show.genres,
-      })
+
+      const matchesAllSelectedGenres = selectedGenres.every((genre) => showHasGenre(show, genre))
+      if (matchesAllSelectedGenres) {
+        items.push(toBrowseShowItem(show))
+      }
     }
   }
 

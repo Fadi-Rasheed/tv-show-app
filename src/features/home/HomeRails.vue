@@ -1,10 +1,22 @@
 <script setup lang="ts">
+import { getActivePinia } from 'pinia'
 import Rail from '@/components/Rail.vue'
+import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
 import type { GenreRail } from '@/shared/api/utils'
+import type { ShowGenre } from '@/shared/types/genre'
 
 defineProps<{
   rails: GenreRail[]
 }>()
+
+const onBrowseMoreClick = (genre: ShowGenre) => {
+  if (!getActivePinia()) {
+    return
+  }
+
+  const browseFiltersStore = useBrowseFiltersStore()
+  browseFiltersStore.setSingleGenre(genre)
+}
 </script>
 
 <template>
@@ -12,9 +24,10 @@ defineProps<{
     <Rail
       v-for="rail in rails"
       :key="rail.genre"
-      :browse-more="{ categorySlug: rail.categorySlug, showBrowseMore: true }"
+      :browse-more="{ genre: rail.genre, showBrowseMore: true }"
       :items="rail.items"
       :title="rail.genre"
+      @browse-more-click="onBrowseMoreClick"
     />
   </section>
 </template>

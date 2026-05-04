@@ -1,18 +1,28 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { getActivePinia } from 'pinia'
 import Rating from '@/components/Rating.vue'
-import { toCategorySlug } from '@/shared/api/utils'
+import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
+import type { ShowGenre } from '@/shared/types/genre'
 
 defineProps<{
   showName: string
   heroImage: string
   summaryPlain: string
-  genresDisplay: string[]
+  genresDisplay: ShowGenre[]
   ratingValue: number | null
 }>()
 
 const { t } = useI18n()
+const onGenreClick = (genre: ShowGenre) => {
+  if (!getActivePinia()) {
+    return
+  }
+
+  const browseFiltersStore = useBrowseFiltersStore()
+  browseFiltersStore.setSingleGenre(genre)
+}
 </script>
 
 <template>
@@ -61,8 +71,9 @@ const { t } = useI18n()
           <RouterLink
             v-for="genre in genresDisplay"
             :key="genre"
-            :to="{ name: 'browse', params: { category: toCategorySlug(genre) } }"
+            :to="{ name: 'browse' }"
             class="text-foreground hover:text-brand-strong focus-visible:ring-ring decoration-border underline underline-offset-4 transition focus-visible:rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+            @click="onGenreClick(genre)"
           >
             {{ genre }}
           </RouterLink>
