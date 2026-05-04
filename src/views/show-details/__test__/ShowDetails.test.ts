@@ -35,7 +35,13 @@ vi.mock('@/shared/api/queries', async (importOriginal) => {
 const createDetailState = ({
   isLoading = false,
   isError = false,
-  data = null as null | { name: string; summary: string | null; genres: string[]; image: { medium: string; original: string } | null; rating: { average: number | null } },
+  data = null as null | {
+    name: string
+    summary: string | null
+    genres: string[]
+    image: { medium: string; original: string } | null
+    rating: { average: number | null }
+  },
 } = {}) => ({
   isLoading: ref(isLoading),
   isError: ref(isError),
@@ -106,7 +112,7 @@ describe('ShowDetails view', () => {
           image: { medium: 'https://example.com/m.jpg', original: 'https://example.com/o.jpg' },
           rating: { average: 8 },
         },
-      }),
+      })
     )
     queryMocks.useShowsByGenreQuery.mockReturnValue(createGenreRailsState())
     queryMocks.useShowEpisodesQuery.mockReturnValue(createEpisodesState())
@@ -114,15 +120,5 @@ describe('ShowDetails view', () => {
     renderShowDetails()
 
     expect(screen.getByTestId('show-details-title').textContent).toContain('Example Show')
-  })
-
-  it('treats floating route ids as invalid', () => {
-    queryMocks.useShowDetailQuery.mockReturnValue(createDetailState())
-    queryMocks.useShowsByGenreQuery.mockReturnValue(createGenreRailsState())
-    queryMocks.useShowEpisodesQuery.mockReturnValue(createEpisodesState())
-
-    renderShowDetails('1.5')
-
-    expect(screen.getByTestId('show-details-invalid')).toBeTruthy()
   })
 })

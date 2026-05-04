@@ -13,25 +13,25 @@ describe('useIntersectionObserverTarget', () => {
   it('begins observing when a target element is attached', async () => {
     const observeSpy = vi.fn()
 
-    class MockIO {
+    class MockIntersectionObserver {
       disconnect = vi.fn()
       unobserve = vi.fn()
       takeRecords = () => [] as IntersectionObserverEntry[]
 
-      constructor(
-        _cb: IntersectionObserverCallback,
-        _opts?: IntersectionObserverInit
-      ) {
-        void _cb
-        void _opts
+      constructor(callback: IntersectionObserverCallback, init?: IntersectionObserverInit) {
+        void callback
+        void init
       }
 
       observe = observeSpy
     }
 
-    vi.stubGlobal('IntersectionObserver', MockIO as unknown as typeof IntersectionObserver)
+    vi.stubGlobal(
+      'IntersectionObserver',
+      MockIntersectionObserver as unknown as typeof IntersectionObserver
+    )
 
-    const Harness = defineComponent({
+    const IntersectionObserverTarget = defineComponent({
       setup() {
         const { target } = useIntersectionObserverTarget({ onIntersect: vi.fn() })
         const inner = ref<HTMLElement | null>(null)
@@ -45,7 +45,7 @@ describe('useIntersectionObserverTarget', () => {
       template: '<div ref="inner" />',
     })
 
-    mount(Harness)
+    mount(IntersectionObserverTarget)
 
     await flushPromises()
 

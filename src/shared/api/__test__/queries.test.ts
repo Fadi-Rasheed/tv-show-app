@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { SHOW_GENRE } from '@/shared/types/genre'
 import type { ShowsResponse } from '@/shared/types/show'
-import { buildGenreRails, relatedItemsFromGenreRails, showMatchesBrowseCategory } from '@/shared/api/utils'
+import {
+  buildGenreRails,
+  relatedItemsFromGenreRails,
+  showMatchesBrowseCategory,
+} from '@/shared/api/utils'
 
 const showsFixture: ShowsResponse = [
   {
@@ -24,7 +28,10 @@ const showsFixture: ShowsResponse = [
     webChannel: null,
     dvdCountry: null,
     externals: { tvrage: null, thetvdb: null, imdb: null },
-    image: { medium: 'https://example.com/1-medium.jpg', original: 'https://example.com/1-original.jpg' },
+    image: {
+      medium: 'https://example.com/1-medium.jpg',
+      original: 'https://example.com/1-original.jpg',
+    },
     summary: null,
     updated: 1,
     _links: { self: { href: 'https://example.com/1' } },
@@ -98,7 +105,7 @@ describe('relatedItemsFromGenreRails', () => {
     expect(items[0]?.title).toBe('Action Hit')
   })
 
-  it('dedupes a show that appears in multiple selected genre rails', () => {
+  it('includes each show at most once when it appears in more than one selected genre rail', () => {
     const rails = buildGenreRails(showsFixture)
     const items = relatedItemsFromGenreRails(rails, {
       excludeId: 999,

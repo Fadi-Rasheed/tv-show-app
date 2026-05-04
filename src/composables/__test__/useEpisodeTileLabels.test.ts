@@ -27,7 +27,7 @@ describe('useEpisodeTileLabels', () => {
       summary: '<p>Hello friend</p>',
     }
 
-    const Harness = defineComponent({
+    const EpisodeTileLabels = defineComponent({
       setup() {
         const episodeRef = ref(episode)
         const { titleLine, summaryPlain, runtimeLabel } = useEpisodeTileLabels(episodeRef)
@@ -42,7 +42,7 @@ describe('useEpisodeTileLabels', () => {
       `,
     })
 
-    render(Harness, {
+    render(EpisodeTileLabels, {
       global: { plugins: [i18n] },
     })
 

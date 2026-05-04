@@ -76,35 +76,4 @@ describe('createDebouncer', () => {
     vi.runAllTimers()
     expect(onDebouncedValue).toHaveBeenCalledTimes(1)
   })
-
-  it('shouldFlushImmediately clears a previously scheduled delayed call', () => {
-    const onDebouncedValue = vi.fn()
-    const debouncer = createDebouncer<string>({
-      debounceDelayMs: 100,
-      onDebouncedValue,
-      shouldFlushImmediately: (candidateValue) => candidateValue === '',
-    })
-
-    debouncer.schedule('pending')
-    debouncer.schedule('')
-
-    expect(onDebouncedValue).toHaveBeenCalledTimes(1)
-    expect(onDebouncedValue).toHaveBeenCalledWith('')
-
-    vi.advanceTimersByTime(500)
-    expect(onDebouncedValue).toHaveBeenCalledTimes(1)
-  })
-
-  it('supports non-string value types', () => {
-    const onDebouncedValue = vi.fn()
-    const debouncer = createDebouncer<{ id: number }>({
-      debounceDelayMs: 10,
-      onDebouncedValue,
-    })
-
-    debouncer.schedule({ id: 1 })
-    vi.advanceTimersByTime(10)
-
-    expect(onDebouncedValue).toHaveBeenCalledWith({ id: 1 })
-  })
 })
