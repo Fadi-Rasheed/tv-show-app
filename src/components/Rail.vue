@@ -83,7 +83,7 @@ const onBrowseMoreClick = () => {
         class="text-muted hover:text-foreground focus-visible:ring-ring xs:text-sm inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition focus-visible:ring-2 focus-visible:outline-none"
         @click="onBrowseMoreClick"
       >
-        <span>{{ t('common.actions.seeMore') }}</span>
+        <span>{{ t('common.components.rail.browseAllCategoryShows', { category: title }) }}</span>
         <ChevronRight aria-hidden="true" class="h-4 w-4" />
       </RouterLink>
     </header>
@@ -97,6 +97,9 @@ const onBrowseMoreClick = () => {
         :key="show.id"
         :to="{ name: 'show-details', params: { id: show.id } }"
         class="rail-tile-link"
+        :aria-label="
+          t('common.components.rail.tileLinkAriaLabel', { title: show.title, rating: show.rating })
+        "
       >
         <Tile
           :image-url="show.image?.medium || show.image?.original || fallbackImageUrl"
@@ -109,15 +112,15 @@ const onBrowseMoreClick = () => {
       <RouterLink
         v-if="showBrowseMoreTile"
         :to="{ name: 'browse' }"
-        :aria-label="t('common.components.rail.seeMoreTileAriaLabel')"
         class="rail-tile-link"
+        :aria-label="t('common.components.rail.seeMoreTileAriaLabel', { category: title })"
         @click="onBrowseMoreClick"
       >
         <div class="rail-see-more-tile group" data-testid="see-more-tile">
           <span
             class="font-header text-foreground sm:text-header-sm text-sm leading-6 font-semibold whitespace-nowrap"
           >
-            {{ t('common.actions.seeMore') }}
+            {{ t('common.components.rail.seeMoreTile') }}
           </span>
           <ChevronRight
             aria-hidden="true"

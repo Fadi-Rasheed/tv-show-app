@@ -73,6 +73,7 @@ const onGenreClick = (genre: ShowGenre) => {
             :key="genre"
             :to="{ name: 'browse' }"
             class="text-foreground hover:text-brand-strong focus-visible:ring-ring decoration-border underline underline-offset-4 transition focus-visible:rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+            :aria-label="t('common.pages.showDetails.genreBrowseLinkAria', { genre })"
             @click="onGenreClick(genre)"
           >
             {{ genre }}

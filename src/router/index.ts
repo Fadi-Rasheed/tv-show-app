@@ -4,6 +4,7 @@ const Home = () => import('@/views/home/Home.vue')
 const ShowDetails = () => import('@/views/show-details/ShowDetails.vue')
 const Search = () => import('@/views/search/Search.vue')
 const Browse = () => import('@/views/browse/Browse.vue')
+const NotFound = () => import('@/views/not-found/NotFound.vue')
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -28,6 +29,11 @@ export const router = createRouter({
       name: 'show-details',
       component: ShowDetails,
       props: true,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: NotFound,
     },
   ],
 })

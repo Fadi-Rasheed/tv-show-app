@@ -20,7 +20,7 @@ describe('HomeRails', () => {
     setActivePinia(createPinia())
   })
 
-  it('sets browse filter to one genre after See more navigation', async () => {
+  it('sets browse filter to one genre after Browse all category navigation', async () => {
     render(HomeRails, {
       props: {
         rails: [
@@ -49,7 +49,9 @@ describe('HomeRails', () => {
       },
     })
 
-    await fireEvent.click(screen.getAllByRole('link', { name: /see more/i })[0]!)
+    await fireEvent.click(
+      screen.getAllByRole('link', { name: /browse all drama shows/i })[0]!,
+    )
 
     expect(useBrowseFiltersStore().selectedGenres).toEqual([SHOW_GENRE.DRAMA])
   })

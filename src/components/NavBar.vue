@@ -2,6 +2,7 @@
 import { Search } from 'lucide-vue-next'
 import BackButton from '@/components/BackButton.vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 type NavElement = {
@@ -16,6 +17,7 @@ defineProps<{
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 const isHomePage = computed(() => route.name === 'home')
 
 function goBack() {
@@ -26,13 +28,26 @@ function goBack() {
 <template>
   <header class="border-border/75 bg-background/75 sticky top-0 z-40 border-b backdrop-blur">
     <nav
-      class="relative flex w-full items-center justify-center p-4 sm:px-8"
+      class="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 p-4 sm:gap-4 sm:px-8"
       aria-label="Primary navigation"
     >
-      <div class="absolute top-1/2 left-4 flex -translate-y-1/2 items-center sm:left-6 lg:left-8">
+      <div class="flex min-w-0 items-center gap-2 justify-self-start sm:gap-3">
+        <RouterLink
+          to="/"
+          class="text-foreground hover:text-brand-strong focus-visible:ring-brand/70 inline-flex min-w-0 items-center gap-2 rounded-lg py-1 pr-2 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          :aria-label="t('common.app.homeLinkAria')"
+        >
+          <img src="/favicon.svg" width="32" height="32" alt="" class="h-8 w-8 shrink-0" />
+          <span class="font-display text-header-sm xs:inline hidden tracking-tight">{{
+            t('common.app.name')
+          }}</span>
+        </RouterLink>
         <BackButton v-if="!isHomePage" @click="goBack" />
       </div>
-      <ul class="my-0 flex list-none items-center gap-8 p-0 sm:gap-10" role="list">
+      <ul
+        class="my-0 flex shrink-0 list-none items-center justify-center gap-4 justify-self-center p-0 sm:gap-10"
+        role="list"
+      >
         <li v-for="element in elements" :key="element.to">
           <RouterLink
             :to="element.to"
@@ -49,6 +64,7 @@ function goBack() {
           </RouterLink>
         </li>
       </ul>
+      <div aria-hidden="true" />
     </nav>
   </header>
 </template>
