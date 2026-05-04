@@ -6,7 +6,7 @@ import { useIntersectionObserverTarget } from '@/composables/useIntersectionObse
 import BrowseGenreFilters from '@/features/browse/BrowseGenreFilters.vue'
 import BrowseHeader from '@/features/browse/BrowseHeader.vue'
 import BrowseResultsSection from '@/features/browse/BrowseResultsSection.vue'
-import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
+import { useBrowseFiltersStore } from '@/stores/useBrowseFiltersStore'
 import type { ShowsResponse } from '@/shared/types/show'
 import { showsPagesInfiniteQueryOptions } from '@/shared/api/queries'
 import { collectBrowseShowsFromPages } from '@/shared/api/utils'

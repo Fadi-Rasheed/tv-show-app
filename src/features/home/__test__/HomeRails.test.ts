@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import HomeRails from '../HomeRails.vue'
 import commonEn from '@/shared/i18n/locales/en/common.json'
 import { SHOW_GENRE } from '@/shared/types/genre'
-import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
+import { useBrowseFiltersStore } from '@/stores/useBrowseFiltersStore'
 
 const i18n = createI18n({
   legacy: false,

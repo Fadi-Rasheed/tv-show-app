@@ -3,7 +3,7 @@ import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getActivePinia } from 'pinia'
 import Rating from '@/components/Rating.vue'
-import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
+import { useBrowseFiltersStore } from '@/stores/useBrowseFiltersStore'
 import type { ShowGenre } from '@/shared/types/genre'
 
 defineProps<{

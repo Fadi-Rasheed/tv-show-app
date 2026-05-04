@@ -16,20 +16,20 @@ Browse and search television series powered by the public [TVMaze API](https://w
 
 ### Search (`/search`)
 
-- **Name search** with an accessible labeled field and **debounced** queries to limit API churn.
+- **Name search** with an accessible labeled field and **debounced** queries to limit API calls.
 - Result states for **initial hint**, **in progress**, **error**, **no matches**, and the results grid.
 
 ### Browse (`/browse`)
 
-- Explores the catalog via **paginated show index** requests with **load more** (including an intersection-based sentinel).
+- Explores the catalog via **paginated show index** requests: **load more** wires **Intersection Observer** to a **scroll anchor** under the grid, so **additional API calls run as you scroll** when that marker enters the viewport.
 - **Multi-select genre filters** with a clear action; selections persist in **Pinia** while you move around the app.
 - **Prefetch** logic for sparse filter combinations so the grid can fill without extra taps.
 - Loading, error, and tailored empty states.
 
 ### Show details (`/show-details/:id`)
 
-- **Hero** with artwork, summary, genres, and rating.
-- **Tabs**: **Related** (other highly rated titles that share genres), **Details** (cast from embedded API data), **Episodes** (per-show episode list).
+- **Hero** with a **show poster**, summary, genres, and rating.
+- **Tabs**: **Related** (other highly rated titles that share genres), **Details** (cast from the same show request via `embed=cast`), **Episodes** (fetches `/shows/:id/episodes` when you select the tab—the panel mounts on demand).
 - Handles **invalid IDs**, **loading**, and **fetch errors** explicitly.
 
 Global **primary navigation** (home, browse, search) lives in the app chrome; details and inner flows use **back** affordances where appropriate.
@@ -40,10 +40,10 @@ The app deliberately **splits server state and client UI state** instead of fold
 
 ### Why two tools
 
-| Concern                                                                                            | Tool                   | Role                                                                                                                                              |
-| -------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Remote data** — what the API returned, when it was fetched, cache freshness, retries             | **TanStack Vue Query** | Single source of truth for HTTP-backed data; query keys describe _what_ was fetched; components stay declarative.                                 |
-| **Ephemeral UI** — choices that are not “the server’s answer” but should survive a few navigations | **Pinia**              | Browse **genre filter selection** is the main example: it is user intent, not a REST resource, and should not be re-derived from Vue Query cache. |
+| Concern                                                                                     | Tool                   | Role                                                                                                                                              |
+| ------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Remote data** — what the API returned, when it was fetched, cache freshness, retries      | **TanStack Vue Query** | Single source of truth for HTTP-backed data; query keys describe _what_ was fetched; components stay declarative.                                 |
+| **Local UI state** — not the API payload, but choices that should survive a few navigations | **Pinia**              | Browse **genre filter selection** is the main example: it is user intent, not a REST resource, and should not be re-derived from Vue Query cache. |
 
 ### Decisions this enables
 
@@ -56,7 +56,7 @@ This separation is intentional: it keeps **server contracts** (URLs, JSON shapes
 
 ## Tech stack
 
-- **Vue 3 + TypeScript** — Composition API, `<script setup>`, strict typing at boundaries.
+- **Vue 3 + TypeScript** — Composition API, strict typing at boundaries.
 - **Vite** — Dev and build tooling.
 - **Vue Router** — Lazy-loaded routes for smaller initial bundles.
 - **Pinia** — Client/UI state (see [State management](#state-management-core-design-choice)).
@@ -76,19 +76,29 @@ src/
   composables/         # Cross-feature behavior (observers, labels)
   features/            # Feature modules: home, search, show-details, browse
     home/              # Genre rails, home loading/error/empty
+    browse/            # Results grid, genre filters, infinite scroll / load-more
     search/            # Search input, results, states
     show-details/      # Hero, episodes, cast, related, states
-    browse/            # Grid, filters, infinite pages, Pinia store
-  views/               # Route-level shells wiring features to the router
   router/              # Route table + lazy imports
   shared/
     api/               # fetch wrapper, query keys, queries, mappers (e.g. genre rails)
-    providers/         # Pinia + QueryClient setup
+    i18n/              # Locale JSON + plugin setup
+    providers/         # QueryClient setup for TanStack Vue Query
     types/             # TVMaze-aligned and internal types
     utils/             # Pure helpers (debounce, HTML, observers)
-    i18n/              # Locale JSON + plugin setup
-  App.vue, main.ts, style.css
+  stores/              # Pinia stores shared across routes (e.g. browse genre filters)
+  views/               # Route-level shells (same order: nav routes, then detail, then 404)
+    browse/            # `/browse`
+    home/              # `/`
+    not-found/         # catch-all 404
+    search/            # `/search`
+    show-details/      # `/show-details/:id`
+  App.vue
+  main.ts
+  style.css
 ```
+
+**Pinia** is created in `main.ts` (`createPinia()`). Store modules live under `stores/` and are used from home, browse, and show details where needed.
 
 ### Principles
 
@@ -102,23 +112,26 @@ src/
 flowchart LR
   subgraph ui [UI]
     Home[Home rails]
-    Details[Show details]
+    Details["Show details<br/>embed cast with show · episodes on tab select"]
     Search[Search]
     Browse[Browse grid]
   end
   subgraph tq [TanStack Vue Query]
     Q1[useShowsByGenreQuery]
     Q2[useShowDetailQuery]
+    Q5[useShowEpisodesQuery]
     Q3[useShowSearchQuery]
     Q4[showsPagesInfiniteQueryOptions]
   end
   API[TVMaze HTTP]
   Home --> Q1
   Details --> Q2
+  Details --> Q5
   Search --> Q3
   Browse --> Q4
   Q1 --> API
   Q2 --> API
+  Q5 --> API
   Q3 --> API
   Q4 --> API
 ```
@@ -129,7 +142,7 @@ The client uses `https://api.tvmaze.com`, injected as `apiBaseUrl` in `vite.conf
 
 ## How to run
 
-### Prerequisites
+### What you need
 
 - **Node.js**: **20+** recommended (Vite 8 / current toolchain). Verified with **Node v24.11.1**.
 - **npm**: **10+** works; verified with **npm 11.6.2**.
@@ -160,6 +173,5 @@ npm run test:coverage
 - **What is covered**
   - **Pure logic**: genre rail building, sorting, slugs, debounce, HTML utilities, types.
   - **API layer**: `fetchApi` behavior, query key stability, query hooks (mocked network).
-  - **Stores**: browse filter store.
+  - **Stores**: `stores/useBrowseFiltersStore` (genre filter selection).
   - **Components/features**: rails, search and browse sections, show detail states, nav/app smoke behavior.
-- **What is not claimed**: full E2E in a browser; the focus is fast, deterministic unit and component tests with mocks.

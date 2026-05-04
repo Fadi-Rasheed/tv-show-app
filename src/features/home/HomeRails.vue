@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getActivePinia } from 'pinia'
 import Rail from '@/components/Rail.vue'
-import { useBrowseFiltersStore } from '@/features/browse/stores/useBrowseFiltersStore'
+import { useBrowseFiltersStore } from '@/stores/useBrowseFiltersStore'
 import type { GenreRail } from '@/shared/api/utils'
 import type { ShowGenre } from '@/shared/types/genre'
 
